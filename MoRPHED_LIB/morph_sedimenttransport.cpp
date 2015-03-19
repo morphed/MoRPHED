@@ -181,6 +181,83 @@ void MORPH_SedimentTransport::calcLateralRetreat()
     CPLFree(newRow);
 }
 
+void MORPH_SedimentTransport::connectBankErosion()
+{
+     GDALDataset *pBankErode, *pCopy;
+     QString path = qsTempPath + "/copy.tif";
+
+     pBankErode = (GDALDataset*) GDALOpen(qsBankErode.toStdString().c_str(), GA_Update);
+     pCopy = pDriverTIFF->CreateCopy(path.toStdString().c_str(), pBankErode, FALSE, NULL, NULL, NULL);
+
+     float *newRow = (float*) CPLMalloc(sizeof(float)*nCols);
+     float *erdWin = (float*) CPLMalloc(sizeof(float)*9);
+
+     int count, stopCount;
+     double total;
+     bool calc;
+
+     for (int i=1; i<nRows-1; i++)
+     {
+         for (int j=1; j<nCols-1; j++)
+         {
+
+             pCopy->GetRasterBand(1)->RasterIO(GF_Read, j-1, i-1, 3, 3, erdWin, 3, 3, GDT_Float32, 0, 0);
+
+             if (erdWin[4] == 0.0)
+             {
+                 count = 0, stopCount = 0;
+                 total = 0.0;
+                 calc = true;
+
+                 for (int k=0; k<9; k++)
+                 {
+
+                     if (k != 4)
+                     {
+                         if (erdWin[k] != 0.0 && erdWin[k] != noData)
+                         {
+                             count++;
+                             total += erdWin[k];
+                         }
+                         else
+                         {
+                             stopCount++;
+                         }
+                     }
+
+                     if (stopCount > 2)
+                     {
+                         calc = false;
+                         break;
+                     }
+                 }
+
+                 if (calc)
+                 {
+                     newRow[j] = (total / (count*1.0));
+                 }
+                 else
+                 {
+                     newRow[j] = 0.0;
+                 }
+             }
+             else
+             {
+                 newRow[j] = erdWin[4];
+             }
+         }
+
+         newRow[0] = 0.0, newRow[nCols-1] = 0.0;
+         pBankErode->GetRasterBand(1)->RasterIO(GF_Write, 0, i, nCols, 1, newRow, nCols, 1, GDT_Float32, 0, 0);
+     }
+
+     GDALClose(pBankErode);
+     GDALDeleteDataset(pDriverTIFF, path.toStdString().c_str());
+
+     CPLFree(newRow);
+     CPLFree(erdWin);
+}
+
 void MORPH_SedimentTransport::copyOutputs()
 {
     //GDALAllRegister();
@@ -354,7 +431,7 @@ void MORPH_SedimentTransport::eliminateRegionsArea(int nRegions)
 
                     if (*regVal == i)
                     {
-                        *regVal = -9999;
+                        *regVal = noData;
                         pRegions->GetRasterBand(1)->RasterIO(GF_Write, k, j, 1, 1, regVal, 1, 1, GDT_Float32, 0, 0);
                     }
                 }
@@ -463,6 +540,7 @@ void MORPH_SedimentTransport::erodeBanks()
     float *slpRow = (float*) CPLMalloc(sizeof(float)*nCols);
     float *erodeVal = (float*) CPLMalloc(sizeof(float)*9);
     float *dem3x3 = (float*) CPLMalloc(sizeof(float)*9);
+    float *erode3x3 = (float*) CPLMalloc(sizeof(float)*9);
     float *dem3x3New = (float*) CPLMalloc(sizeof(float)*9);
 
     int nLateral, nCountElev, colNew, rowNew;
@@ -483,10 +561,14 @@ void MORPH_SedimentTransport::erodeBanks()
                 addElev = 0.0;
                 pOldDem->GetRasterBand(1)->RasterIO(GF_Read, j-1, i-1, 3, 3, dem3x3, 3, 3, GDT_Float32, 0, 0);
                 nLateral = round(valRow[j]);
+                if (valRow[j] > 0.5 && nLateral < 1)
+                {
+                    qDebug()<<"lateral erosion error "<<valRow[j]<< nLateral;
+                }
 
                 for (int k=0; k<9; k++)
                 {
-                    if (dem3x3[k] < dem3x3[4])
+                    if (dem3x3[k] < dem3x3[4] && dem3x3[k] != noData)
                     {
                         nCountElev++;
                         addElev += dem3x3[k];
@@ -558,17 +640,21 @@ void MORPH_SedimentTransport::erodeBanks()
                     if (erode)
                     {
                         pOldDem->GetRasterBand(1)->RasterIO(GF_Read, colNew-1, rowNew-1, 3, 3, dem3x3New, 3, 3, GDT_Float32, 0, 0);
+                        pErodeRaster->GetRasterBand(1)->RasterIO(GF_Read, colNew-1, rowNew-1, 3, 3, erode3x3, 3, 3, GDT_Float32, 0, 0);
 
                         for (int l=0; l<9; l++)
                         {
                             if (dem3x3New[l] > adjElev)
                             {
-                                erodeVal[l] = dem3x3New[l]-adjElev;
-                                dem3x3New[l] = adjElev;
+                                if ((dem3x3New[l]-adjElev) > erode3x3[l])
+                                {
+                                    erodeVal[l] = dem3x3New[l]-adjElev;
+                                }
+                                //dem3x3New[l] = adjElev;
                             }
                             else
                             {
-                                erodeVal[l] = 0.0;
+                                erodeVal[l] = erode3x3[l];
                             }
                         }
 
@@ -588,7 +674,70 @@ void MORPH_SedimentTransport::erodeBanks()
     CPLFree(slpRow);
     CPLFree(erodeVal);
     CPLFree(dem3x3);
+    CPLFree(erode3x3);
     CPLFree(dem3x3New);
+}
+
+void MORPH_SedimentTransport::filterBankErosion()
+{
+    GDALDataset *pBankErode, *pCopy;
+    QString path = qsTempPath + "/copy.tif";
+
+    openErosionRaster();
+
+    pBankErode = pDriverTIFF->CreateCopy(qsBankErode.toStdString().c_str(), pErodeRaster, FALSE, NULL, NULL, NULL);
+    pCopy = pDriverTIFF->CreateCopy(path.toStdString().c_str(), pBankErode, FALSE, NULL, NULL, NULL);
+
+    float *oldWin = (float*) CPLMalloc(sizeof(float)*9);
+    float *newRow = (float*) CPLMalloc(sizeof(float)*nCols);
+
+    int count;
+    double total;
+
+    for (int i=1; i<nRows-1; i++)
+    {
+        for (int j=1; j<nCols-1; j++)
+        {
+            pErodeRaster->GetRasterBand(1)->RasterIO(GF_Read, j-1, i-1, 3, 3, oldWin, 3, 3, GDT_Float32, 0, 0);
+
+            if (oldWin[4] == noData || oldWin[4] == 0.0)
+            {
+                newRow[j] = 0.0;
+            }
+            else
+            {
+                count = 0;
+                total = 0.0;
+
+                for (int k=0; k<9; k++)
+                {
+                    if (oldWin[k] != noData && oldWin[k] != 0.0)
+                    {
+                        count++;
+                        total += oldWin[k];
+                    }
+                }
+
+                newRow[j] = (total / (count*1.0));
+
+            }
+        }
+
+        pBankErode->GetRasterBand(1)->RasterIO(GF_Write, 0, i, nCols, 1, newRow, nCols, 1, GDT_Float32, 0, 0);
+
+    }
+
+    GDALClose(pErodeRaster);
+
+    pErodeRaster = pDriverTIFF->CreateCopy(qsErodePath.toStdString().c_str(), pBankErode, FALSE, NULL, NULL, NULL);
+
+    GDALClose(pErodeRaster);
+    GDALClose(pBankErode);
+
+    GDALDeleteDataset(pDriverTIFF, path.toStdString().c_str());
+
+    CPLFree(oldWin);
+    CPLFree(newRow);
 }
 
 void MORPH_SedimentTransport::findDepositionCells(int row, int col, double amt)
@@ -844,12 +993,18 @@ void MORPH_SedimentTransport::runBankErode()
     erodeBanks();
     qDebug()<<"bank erode done";
 
-    Raster.subtract(qsNewDemPath.toStdString().c_str(), qsErodePath.toStdString().c_str());
-    openErosionRaster();
-    GDALDataset *pTemp;
+    filterBankErosion();
+    qDebug()<<"connecting bank erosion";
+    connectBankErosion();
+    qDebug()<<"connection done";
+
+    Raster.subtract(qsNewDemPath.toStdString().c_str(), qsBankErode.toStdString().c_str());
+    GDALDataset *pTemp, *pBankErode;
+    pBankErode = (GDALDataset*) GDALOpen(qsBankErode.toStdString().c_str(), GA_ReadOnly);
     QString path = qsOutputPath + "/" + qsFloodName + "/GTIFF/BankErosion" + QString::number(nCurrentIteration+1) + ".tif";
-    pTemp = pDriverTIFF->CreateCopy(path.toStdString().c_str(), pErodeRaster, FALSE, NULL, NULL, NULL);
-    GDALClose(pErodeRaster);
+    pTemp = pDriverTIFF->CreateCopy(path.toStdString().c_str(), pBankErode, FALSE, NULL, NULL, NULL);
+    //pTemp = pDriverTIFF->CreateCopy(qsErodePath.toStdString().c_str(), pBankErode, FALSE, NULL, NULL, NULL);
+    GDALClose(pBankErode);
     GDALClose(pTemp);
     //clearErosion();
 
@@ -2332,6 +2487,7 @@ void MORPH_SedimentTransport::setPaths()
     qsRegionsPath = qsTempPath + "/Regions.tif";
     qsBankErodeInput = qsTempPath + "/BankIn.tif";
     qsBankShear = qsTempPath + "/BankShear.tif";
+    qsBankErode = qsTempPath + "/BankErode.tif";
     qsLateralErode = qsTempPath + "/LateralErode.tif";
     qsRegShearPath = qsTempPath + "/RegionShear.tif";
     qsInterRegPath = qsTempPath + "/BankIntermediate.tif";

@@ -37,6 +37,7 @@ public:
     void slopeDeg(const char *sourcePath, const char *slopePath);
     void subtract(const char *subtractPath);
     void subtract(const char *sourcePath, const char *subtractPath);
+    void zeroToNoData(const char *sourcePath, double noDataValue);
 protected:
 
 private:

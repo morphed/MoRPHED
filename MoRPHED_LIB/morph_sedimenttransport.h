@@ -13,6 +13,7 @@ public:
     void addDeposition();
     void calcBankShear();
     void calcLateralRetreat();
+    void connectBankErosion();
     void copyOutputs();
     void depositTo3x3(int row, int col, double amt);
     void depositTo5x5(int row, int col, double amt);
@@ -20,6 +21,7 @@ public:
     void eliminateRegionsArea(int nRegions);
     void eliminateRegionsValue(int nRegions);
     void erodeBanks();
+    void filterBankErosion();
     void findDepositionCells(int row, int col, double amt);
     void importSediment();
     void loadRasters();
@@ -47,6 +49,7 @@ private:
             qsRegShearPath,
             qsAspectPath,
             qsLateralErode,
+            qsBankErode,
             qsBankShear,
             qsBankErodeInput;
 

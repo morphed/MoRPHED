@@ -60,9 +60,9 @@ void GUI_MainWindow::on_btn_run_clicked()
 
         if (i == 0)
         {
-            //fm.createFloodDirectories(i);
+            fm.createFloodDirectories(i);
             qDebug()<<"running delft";
-            //delft->run();
+            delft->run();
             qDebug()<<"delft done, load rasters";
             trans->loadRasters();
             qDebug()<<"rasters loaded";

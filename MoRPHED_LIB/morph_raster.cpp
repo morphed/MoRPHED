@@ -34,9 +34,13 @@ void MORPH_Raster::add(const char *addPath)
 
         for (int j=0; j<nCols; j++)
         {
-            if (srcRow[j] == noData || addRow[j] == noData)
+            if (srcRow[j] == noData)
             {
                 newRow[j] = noData;
+            }
+            else if (addRow[j] == noData)
+            {
+                newRow[j] = srcRow[j];
             }
             else
             {
@@ -887,9 +891,13 @@ void MORPH_Raster::subtract(const char *subtractPath)
 
         for (int j=0; j<nCols; j++)
         {
-            if (srcRow[j] == noData || subRow[j] == noData)
+            if (srcRow[j] == noData)
             {
                 newRow[j] = noData;
+            }
+            else if (subRow[j] == noData)
+            {
+                newRow[j] = srcRow[j];
             }
             else
             {
@@ -912,6 +920,43 @@ void MORPH_Raster::subtract(const char *sourcePath, const char *subtractPath)
 {
     setProperties(sourcePath);
     subtract(subtractPath);
+}
+
+void MORPH_Raster::zeroToNoData(const char *sourcePath, double noDataValue)
+{
+    setProperties(sourcePath);
+    noData = noDataValue;
+
+    GDALDataset *pSourceRaster;
+
+    pSourceRaster = (GDALDataset*) GDALOpen(sourcePath, GA_Update);
+
+    float *oldRow = (float*) CPLMalloc(sizeof(float)*nCols);
+    float *newRow = (float*) CPLMalloc(sizeof(float)*nCols);
+
+    GDALClose(pSourceRaster);
+
+    for (int i=0; i<nRows; i++)
+    {
+        pSourceRaster->GetRasterBand(1)->RasterIO(GF_Read, 0, i, nCols, 1, oldRow, nCols, 1, GDT_Float32, 0, 0);
+
+        for (int j=0; j<nCols; j++)
+        {
+            if (oldRow[j] == 0.0 || oldRow[j] == noData)
+            {
+                newRow[j] = noData;
+            }
+            else
+            {
+                newRow[j] = oldRow[j];
+            }
+        }
+
+        pSourceRaster->GetRasterBand(1)->RasterIO(GF_Write, 0, i, nCols, 1, newRow, nCols, 1, GDT_Float32, 0, 0);
+    }
+
+    CPLFree(oldRow);
+    CPLFree(newRow);
 }
 
 double MORPH_Raster::averageCol(int col)
