@@ -1200,21 +1200,25 @@ void MORPH_SedimentTransport::runBedErode()
 
     GDALDataset *pTemp2, *pTemp3;
 
-    path = qsOutputPath + "/GTIFF/" + qsFloodName + "/DEM" + QString::number(nCurrentIteration+1) + ".tif";
+    path = qsOutputPath + "/" + qsFloodName + "/GTIFF/" + "/DEM" + QString::number(nCurrentIteration+1) + ".tif";
+    qDebug()<<path;
 
     openNewDem();
     qDebug()<<"copying new dem";
     pTemp = pDriverTIFF->CreateCopy(path.toStdString().c_str(), pNewDem, FALSE, NULL, NULL, NULL);
     qDebug()<<"new dem to outputs";
-    GDALClose(pNewDem);
-    pTemp2 = pDriverTIFF->CreateCopy(qsOldDemPath.toStdString().c_str(), pTemp, FALSE, NULL, NULL, NULL);
+    pTemp2 = pDriverTIFF->CreateCopy(qsOldDemPath.toStdString().c_str(), pNewDem, FALSE, NULL, NULL, NULL);
     qDebug()<<"new dem to old dem";
-    pTemp3 = pDriverTIFF->CreateCopy(qsNewDemPath.toStdString().c_str(), pTemp, FALSE, NULL, NULL, NULL);
+    //GDALClose(pNewDem);
+    qDebug()<<"new dem closed";
+    //pTemp3 = pDriverTIFF->CreateCopy(qsNewDemPath.toStdString().c_str(), pTemp, FALSE, NULL, NULL, NULL);
     qDebug()<<"new dem to temp";
 
     GDALClose(pTemp);
     GDALClose(pTemp2);
     GDALClose(pTemp3);
+    qDebug()<<"closing new dem";
+    GDALClose(pNewDem);
     qDebug()<<"FINAL exported "<<exported;
 }
 
