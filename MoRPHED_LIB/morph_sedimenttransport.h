@@ -35,6 +35,7 @@ public:
 private:
     double exported,
             unaccounted;
+
     QString qsXvelPath,
             qsYvelPath,
             qsFdirPath,
@@ -44,6 +45,7 @@ private:
             qsErodePath,
             qsErodeFilterPath,
             qsSlopePath,
+            qsSlopeFiltPath,
             qsRegionsPath,
             qsInterRegPath,
             qsRegShearPath,

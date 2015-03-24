@@ -922,6 +922,57 @@ void MORPH_Raster::subtract(const char *sourcePath, const char *subtractPath)
     subtract(subtractPath);
 }
 
+void MORPH_Raster::subtract(const char *sourcePath, const char *subtractPath, const char *outputPath)
+{
+    setProperties(sourcePath);
+
+    GDALDataset *pSourceDS, *pSubtractDS, *pOutDS;
+
+    pSourceDS = (GDALDataset*) GDALOpen(m_rasterPath, GA_Update);
+    pSubtractDS = (GDALDataset*) GDALOpen(subtractPath, GA_ReadOnly);
+    pOutDS = pDriverTiff->Create(outputPath, nCols, nRows, 1, GDT_Float32, NULL);
+
+    pOutDS->GetRasterBand(1)->Fill(noData);
+    pOutDS->GetRasterBand(1)->SetNoDataValue(noData);
+    pOutDS->SetGeoTransform(transform);
+
+    float *srcRow = (float*) CPLMalloc(sizeof(float)*nCols);
+    float *subRow = (float*) CPLMalloc(sizeof(float)*nCols);
+    float *newRow = (float*) CPLMalloc(sizeof(float)*nCols);
+
+    for (int i=0; i<nRows; i++)
+    {
+        pSourceDS->GetRasterBand(1)->RasterIO(GF_Read, 0, i, nCols, 1, srcRow, nCols, 1, GDT_Float32, 0, 0);
+        pSubtractDS->GetRasterBand(1)->RasterIO(GF_Read, 0, i, nCols, 1, subRow, nCols, 1, GDT_Float32, 0, 0);
+
+        for (int j=0; j<nCols; j++)
+        {
+            if (srcRow[j] == noData)
+            {
+                newRow[j] = noData;
+            }
+            else if (subRow[j] == noData)
+            {
+                newRow[j] = srcRow[j];
+            }
+            else
+            {
+                newRow[j] = srcRow[j] - subRow[j];
+            }
+        }
+
+        pOutDS->GetRasterBand(1)->RasterIO(GF_Write, 0, i, nCols, 1, newRow, nCols, 1, GDT_Float32, 0, 0);
+    }
+
+    GDALClose(pSourceDS);
+    GDALClose(pSubtractDS);
+    GDALClose(pOutDS);
+
+    CPLFree(srcRow);
+    CPLFree(subRow);
+    CPLFree(newRow);
+}
+
 void MORPH_Raster::zeroToNoData(const char *sourcePath, double noDataValue)
 {
     setProperties(sourcePath);
