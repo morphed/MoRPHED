@@ -905,6 +905,22 @@ void MORPH_SedimentTransport::importSediment()
     clearDeposition();
 
     qDebug()<<"undeposited "<<unaccounted;
+
+    GDALDataset *pTemp, *pTemp2;
+
+    QString path = qsOutputPath + "/" + qsFloodName + "/GTIFF/DEM_" + QString::number(nCurrentIteration+1) + ".tif";
+
+    openNewDem();
+    qDebug()<<"copying new dem";
+    pTemp = pDriverTIFF->CreateCopy(path.toStdString().c_str(), pNewDem, FALSE, NULL, NULL, NULL);
+    qDebug()<<"new dem to outputs";
+    pTemp2 = pDriverTIFF->CreateCopy(qsOldDemPath.toStdString().c_str(), pNewDem, FALSE, NULL, NULL, NULL);
+    qDebug()<<"new dem to old dem";
+
+    GDALClose(pTemp);
+    GDALClose(pTemp2);
+    qDebug()<<"closing new dem";
+    GDALClose(pNewDem);
 }
 
 void MORPH_SedimentTransport::loadRasters()
@@ -1037,8 +1053,9 @@ void MORPH_SedimentTransport::runBankErode()
     qDebug()<<"erosion cleared";
 
     Raster.slopeTOF(qsOldDemPath.toStdString().c_str(), qsSlopePath.toStdString().c_str());
-    Raster.filterLowPass(qsSlopePath.toStdString().c_str(), qsSlopeFiltPath.toStdString().c_str());
     qDebug()<<"slope made";
+    Raster.filterLowPass(qsSlopePath.toStdString().c_str(), qsSlopeFiltPath.toStdString().c_str());
+    qDebug()<<"slope filtered";
     Raster.aspect(qsOldDemPath.toStdString().c_str(), qsAspectPath.toStdString().c_str());
     qDebug()<<"aspect made";
 
@@ -1198,27 +1215,6 @@ void MORPH_SedimentTransport::runBedErode()
     Raster.add(qsNewDemPath.toStdString().c_str(), qsDepoPath.toStdString().c_str());
     clearDeposition();
 
-    GDALDataset *pTemp2, *pTemp3;
-
-    path = qsOutputPath + "/" + qsFloodName + "/GTIFF/" + "/DEM" + QString::number(nCurrentIteration+1) + ".tif";
-    qDebug()<<path;
-
-    openNewDem();
-    qDebug()<<"copying new dem";
-    pTemp = pDriverTIFF->CreateCopy(path.toStdString().c_str(), pNewDem, FALSE, NULL, NULL, NULL);
-    qDebug()<<"new dem to outputs";
-    pTemp2 = pDriverTIFF->CreateCopy(qsOldDemPath.toStdString().c_str(), pNewDem, FALSE, NULL, NULL, NULL);
-    qDebug()<<"new dem to old dem";
-    //GDALClose(pNewDem);
-    qDebug()<<"new dem closed";
-    //pTemp3 = pDriverTIFF->CreateCopy(qsNewDemPath.toStdString().c_str(), pTemp, FALSE, NULL, NULL, NULL);
-    qDebug()<<"new dem to temp";
-
-    GDALClose(pTemp);
-    GDALClose(pTemp2);
-    GDALClose(pTemp3);
-    qDebug()<<"closing new dem";
-    GDALClose(pNewDem);
     qDebug()<<"FINAL exported "<<exported;
 }
 

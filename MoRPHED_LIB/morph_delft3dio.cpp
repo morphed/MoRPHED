@@ -507,7 +507,7 @@ void MORPH_Delft3DIO::setDischargePoints()
 
     }
 
-    while (!stop && count < 100000)
+    while (!stop && count < 10000000)
     {
         conveyanceTotal = 0.0;
         for (int i=0; i<nCells; i++)
@@ -526,15 +526,15 @@ void MORPH_Delft3DIO::setDischargePoints()
         estQ = conveyanceTotal * sqrt(dSlope);
         diffQ = estQ - q[nCurrentIteration];
 
-        if (diffQ > 0.1 || diffQ < -0.1)
+        if (diffQ > (0.005*q[nCurrentIteration]) || diffQ < (-0.005*q[nCurrentIteration]))
         {
             if (diffQ > 0.0)
             {
-                depth -= 0.001;
+                depth -= 0.0001;
             }
             else
             {
-                depth += 0.001;
+                depth += 0.0001;
             }
         }
         else
@@ -542,7 +542,7 @@ void MORPH_Delft3DIO::setDischargePoints()
             stop = true;
         }
 
-        if (count == 99999)
+        if (count == 9999999)
         {
             qDebug()<<"DISCHARGE CELLS: too many iterations to find correct dswe, using provided value "<<depth<<" "<<q[nCurrentIteration]<<" "<<estQ<<" "<<meanDepth<<" "<<chezy<<" "<<conveyanceTotal;
         }
