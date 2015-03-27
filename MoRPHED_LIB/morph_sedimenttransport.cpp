@@ -75,7 +75,7 @@ void MORPH_SedimentTransport::calcBankShear()
 
     openShearRaster();
 
-    for (int i=0; i<nRows; i++)
+    for (int i=5; i<nRows-5; i++)
     {
         pRegions->GetRasterBand(1)->RasterIO(GF_Read, 0, i, nCols, 1, regRow, nCols, 1, GDT_Float32, 0, 0);
         pAspect->GetRasterBand(1)->RasterIO(GF_Read, 0, i, nCols, 1, aspRow, nCols, 1, GDT_Float32, 0, 0);
@@ -598,14 +598,21 @@ void MORPH_SedimentTransport::eliminateRegionsValue(int nRegions)
 void MORPH_SedimentTransport::erodeBanks()
 {
     GDALDataset *pRetreat, *pAspect, *pSlopeFilt;
+    qDebug()<<"bank erode datasets declared";
 
     pRetreat = (GDALDataset*) GDALOpen(qsLateralErode.toStdString().c_str(), GA_ReadOnly);
+    qDebug()<<"bank erode retreat opened";
     pAspect = (GDALDataset*) GDALOpen(qsAspectPath.toStdString().c_str(), GA_ReadOnly);
+    qDebug()<<"bank erode aspect opened";
     pSlopeFilt = (GDALDataset*) GDALOpen(qsSlopeFiltPath.toStdString().c_str(), GA_ReadOnly);
+    qDebug()<<"bank erode slope opened";
 
     openOldDem();
+    qDebug()<<"bank erode old dem opened";
     openNewDem();
+    qDebug()<<"bank erode new dem opened";
     openErosionRaster();
+    qDebug()<<"bank erode erosion opened";
 
     float *valRow = (float*) CPLMalloc(sizeof(float)*nCols);
     float *aspRow = (float*) CPLMalloc(sizeof(float)*nCols);
@@ -737,12 +744,14 @@ void MORPH_SedimentTransport::erodeBanks()
         }
     }
 
+    qDebug()<<"bank erode loop finished";
     GDALClose(pRetreat);
     GDALClose(pAspect);
     GDALClose(pSlopeFilt);
     GDALClose(pOldDem);
     GDALClose(pNewDem);
     GDALClose(pErodeRaster);
+    qDebug()<<"bank erode datasets closed";
 
     CPLFree(valRow);
     CPLFree(aspRow);
@@ -917,10 +926,13 @@ void MORPH_SedimentTransport::importSediment()
     pTemp2 = pDriverTIFF->CreateCopy(qsOldDemPath.toStdString().c_str(), pNewDem, FALSE, NULL, NULL, NULL);
     qDebug()<<"new dem to old dem";
 
-    GDALClose(pTemp);
-    GDALClose(pTemp2);
     qDebug()<<"closing new dem";
     GDALClose(pNewDem);
+    qDebug()<<"new dem closed";
+    GDALClose(pTemp);
+    qDebug()<<"temp closed";
+    GDALClose(pTemp2);
+    qDebug()<<"temp 2 closed";
 }
 
 void MORPH_SedimentTransport::loadRasters()
@@ -1052,11 +1064,11 @@ void MORPH_SedimentTransport::runBankErode()
     clearErosion();
     qDebug()<<"erosion cleared";
 
-    Raster.slopeTOF(qsOldDemPath.toStdString().c_str(), qsSlopePath.toStdString().c_str());
+    Raster.slopeTOF(qsNewDemPath.toStdString().c_str(), qsSlopePath.toStdString().c_str());
     qDebug()<<"slope made";
     Raster.filterLowPass(qsSlopePath.toStdString().c_str(), qsSlopeFiltPath.toStdString().c_str());
     qDebug()<<"slope filtered";
-    Raster.aspect(qsOldDemPath.toStdString().c_str(), qsAspectPath.toStdString().c_str());
+    Raster.aspect(qsNewDemPath.toStdString().c_str(), qsAspectPath.toStdString().c_str());
     qDebug()<<"aspect made";
 
     int nRegions;

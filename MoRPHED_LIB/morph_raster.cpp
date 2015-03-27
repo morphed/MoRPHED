@@ -805,7 +805,6 @@ int MORPH_Raster::regions(const char *inputRaster, const char *regionsRaster)
 void MORPH_Raster::setProperties(const char *rasterPath)
 {
     m_rasterPath = rasterPath;
-
     GDALDataset *pRaster = (GDALDataset*) GDALOpen(m_rasterPath, GA_ReadOnly);
 
     nRows = pRaster->GetRasterBand(1)->GetYSize();
@@ -861,7 +860,6 @@ void MORPH_Raster::slopeTOF(const char *slopePath)
 
     CPLFree(eVals);
     CPLFree(sVals);
-
     GDALClose(pSourceDS);
     GDALClose(pSlopeDS);
 }
