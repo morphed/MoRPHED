@@ -75,12 +75,12 @@ void MORPH_SedimentTransport::calcBankShear()
 
     openShearRaster();
 
-    for (int i=5; i<nRows-5; i++)
+    for (int i=1; i<nRows-1; i++)
     {
         pRegions->GetRasterBand(1)->RasterIO(GF_Read, 0, i, nCols, 1, regRow, nCols, 1, GDT_Float32, 0, 0);
         pAspect->GetRasterBand(1)->RasterIO(GF_Read, 0, i, nCols, 1, aspRow, nCols, 1, GDT_Float32, 0, 0);
 
-        for (int j=0; j<nCols; j++)
+        for (int j=1; j<nCols-1; j++)
         {
             if (regRow[j] > 0.0)
             {
@@ -626,13 +626,18 @@ void MORPH_SedimentTransport::erodeBanks()
     double adjElev, addElev;
     bool erode;
 
-    for (int i=1; i<nRows; i++)
+    qDebug()<<"starting bank erode loop";
+    for (int i=1; i<nRows-1; i++)
     {
+        qDebug()<<"reading retreat";
         pRetreat->GetRasterBand(1)->RasterIO(GF_Read, 0, i, nCols, 1, valRow, nCols, 1, GDT_Float32, 0, 0);
+        qDebug()<<"reading aspect";
         pAspect->GetRasterBand(1)->RasterIO(GF_Read, 0, i, nCols, 1, aspRow, nCols, 1, GDT_Float32, 0, 0);
+        qDebug()<<"reading slope";
         pSlopeFilt->GetRasterBand(1)->RasterIO(GF_Read, 0, i, nCols, 1, slpRow, nCols, 1, GDT_Float32, 0, 0);
+        qDebug()<<"row all good "<<i;
 
-        for (int j=0; j<nCols; j++)
+        for (int j=1; j<nCols-1; j++)
         {
             if (valRow[j] != noData)
             {
@@ -661,7 +666,7 @@ void MORPH_SedimentTransport::erodeBanks()
                 {
                     erode = true;
 
-                    if (k > 0)
+                    if (nLateral > 0)
                     {
                         if ((aspRow[j]>0.0 && aspRow[j]<=22.5) || (aspRow[j]>337.5 && aspRow[j]<=360.0))
                         {
