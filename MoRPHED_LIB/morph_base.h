@@ -71,9 +71,11 @@ protected:
 
     GDALDriver *pDriverTIFF;
 
+    void loadDrivers();
+
 private:
     void init();
-    void loadDrivers();
+
     void loadInputText();
 
 signals:

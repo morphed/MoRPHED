@@ -598,21 +598,14 @@ void MORPH_SedimentTransport::eliminateRegionsValue(int nRegions)
 void MORPH_SedimentTransport::erodeBanks()
 {
     GDALDataset *pRetreat, *pAspect, *pSlopeFilt;
-    qDebug()<<"bank erode datasets declared";
 
     pRetreat = (GDALDataset*) GDALOpen(qsLateralErode.toStdString().c_str(), GA_ReadOnly);
-    qDebug()<<"bank erode retreat opened";
     pAspect = (GDALDataset*) GDALOpen(qsAspectPath.toStdString().c_str(), GA_ReadOnly);
-    qDebug()<<"bank erode aspect opened";
     pSlopeFilt = (GDALDataset*) GDALOpen(qsSlopeFiltPath.toStdString().c_str(), GA_ReadOnly);
-    qDebug()<<"bank erode slope opened";
 
     openOldDem();
-    qDebug()<<"bank erode old dem opened";
     openNewDem();
-    qDebug()<<"bank erode new dem opened";
     openErosionRaster();
-    qDebug()<<"bank erode erosion opened";
 
     float *valRow = (float*) CPLMalloc(sizeof(float)*nCols);
     float *aspRow = (float*) CPLMalloc(sizeof(float)*nCols);
@@ -626,16 +619,11 @@ void MORPH_SedimentTransport::erodeBanks()
     double adjElev, addElev;
     bool erode;
 
-    qDebug()<<"starting bank erode loop";
     for (int i=1; i<nRows-1; i++)
     {
-        qDebug()<<"reading retreat";
         pRetreat->GetRasterBand(1)->RasterIO(GF_Read, 0, i, nCols, 1, valRow, nCols, 1, GDT_Float32, 0, 0);
-        qDebug()<<"reading aspect";
         pAspect->GetRasterBand(1)->RasterIO(GF_Read, 0, i, nCols, 1, aspRow, nCols, 1, GDT_Float32, 0, 0);
-        qDebug()<<"reading slope";
         pSlopeFilt->GetRasterBand(1)->RasterIO(GF_Read, 0, i, nCols, 1, slpRow, nCols, 1, GDT_Float32, 0, 0);
-        qDebug()<<"row all good "<<i;
 
         for (int j=1; j<nCols-1; j++)
         {
@@ -666,7 +654,7 @@ void MORPH_SedimentTransport::erodeBanks()
                 {
                     erode = true;
 
-                    if (nLateral > 0)
+                    if (k > 0)
                     {
                         if ((aspRow[j]>0.0 && aspRow[j]<=22.5) || (aspRow[j]>337.5 && aspRow[j]<=360.0))
                         {
@@ -924,10 +912,13 @@ void MORPH_SedimentTransport::importSediment()
 
     QString path = qsOutputPath + "/" + qsFloodName + "/GTIFF/DEM_" + QString::number(nCurrentIteration+1) + ".tif";
 
+    loadDrivers();
     openNewDem();
     qDebug()<<"copying new dem";
     pTemp = pDriverTIFF->CreateCopy(path.toStdString().c_str(), pNewDem, FALSE, NULL, NULL, NULL);
-    qDebug()<<"new dem to outputs";
+    qDebug()<<"deleting old dem "<<qsOldDemPath;
+    GDALDeleteDataset(pDriverTIFF, qsOldDemPath.toStdString().c_str());
+    qDebug()<<"old dem deleted";
     pTemp2 = pDriverTIFF->CreateCopy(qsOldDemPath.toStdString().c_str(), pNewDem, FALSE, NULL, NULL, NULL);
     qDebug()<<"new dem to old dem";
 
