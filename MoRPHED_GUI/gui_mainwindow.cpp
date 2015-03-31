@@ -69,7 +69,7 @@ void GUI_MainWindow::on_btn_run_clicked()
         }
 
         fm.createFloodDirectories(i+1);
-        delft->setCurrentIteration(i);
+        //delft->setCurrentIteration(i);
         trans->setCurrentIteration(i);
 
         qDebug()<<"running bank erosoin";

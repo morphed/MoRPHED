@@ -108,6 +108,11 @@ void MORPH_Base::loadDrivers()
 
 void MORPH_Base::loadInputText()
 {
+    date.clear();
+    q.clear();
+    dswe.clear();
+    import.clear();
+
     //declare temp variables to hold stream data
     QString qsDate, qsQ, qsDSWE, qsImport;
     QDateTime tempDate;

@@ -868,7 +868,7 @@ void MORPH_SedimentTransport::findDepositionCells(int row, int col, double amt)
                 else if (p >=3 )
                 {
                     //deposit to 5x5 here
-                    depositTo3x3(row, col, (sediment*pathLength1.getValueAtPosition(p)));
+                    depositTo5x5(row, col, (sediment*pathLength1.getValueAtPosition(p)));
                 }
                 else
                 {
@@ -897,6 +897,9 @@ void MORPH_SedimentTransport::findDepositionCells(int row, int col, double amt)
 
 void MORPH_SedimentTransport::importSediment()
 {
+    pathLength1.setupDistribution(450.0, 500.0, 225.0, 2, cellWidth);
+    qDebug()<<"pl reset for import"<<pathLength1.getLength()<< pathLength1.getSigA()<< pathLength1.getMuB();
+
     findImportCells();
 
     MORPH_Raster Raster;
@@ -1119,6 +1122,9 @@ void MORPH_SedimentTransport::runBankErode()
 
 void MORPH_SedimentTransport::runBedErode()
 {
+    pathLength1.setupDistribution(plDistLength, sigA, muB, nPlDistType, cellWidth);
+    qDebug()<<"pl reset "<<pathLength1.getLength()<< pathLength1.getSigA()<< pathLength1.getMuB();
+
     //create object for raster operations
     MORPH_Raster Raster;
 
@@ -2620,11 +2626,11 @@ void MORPH_SedimentTransport::runDeposition(const char *erosionRasterPath)
     float *erdRow = (float*) CPLMalloc(sizeof(float)*nCols);
     float *dirWin = (float*) CPLMalloc(sizeof(float)*9);
 
-    for (int i=1; i<nRows-1; i++)
+    for (int i=2; i<nRows-2; i++)
     {
         pRaster->GetRasterBand(1)->RasterIO(GF_Read, 0, i, nCols, 1, erdRow, nCols, 1, GDT_Float32, 0, 0);
 
-        for (int j=1; j<nCols-1; j++)
+        for (int j=2; j<nCols-2; j++)
         {
             if (erdRow[j] != noData && erdRow[j] != 0.0)
             {
@@ -2812,11 +2818,14 @@ void MORPH_SedimentTransport::runDeposition(const char *erosionRasterPath)
         qDebug()<<"depo row done "<<i;
     }
 
+    qDebug()<<"freeing memory";
     CPLFree(erdRow);
     CPLFree(dirWin);
 
 
+    qDebug()<<"closing datasets";
     GDALClose(pRaster);
     GDALClose(pFdirRaster);
     GDALClose(pDepthRaster);
+    qDebug()<<"done depositing";
 }

@@ -69,7 +69,7 @@ void MORPH_Delft3DIO::calculateDSWSE()
         estQ = conveyanceTotal * sqrt(dSlope);
         diffQ = estQ - q[nCurrentIteration];
 
-        if (diffQ > (0.005*q[nCurrentIteration]) || diffQ < (-0.005*q[nCurrentIteration]))
+        if (diffQ > (0.05*q[nCurrentIteration]) || diffQ < (-0.05*q[nCurrentIteration]))
         {
             if (diffQ > 0.0)
             {
@@ -526,7 +526,7 @@ void MORPH_Delft3DIO::setDischargePoints()
         estQ = conveyanceTotal * sqrt(dSlope);
         diffQ = estQ - q[nCurrentIteration];
 
-        if (diffQ > (0.005*q[nCurrentIteration]) || diffQ < (-0.005*q[nCurrentIteration]))
+        if (diffQ > (0.05*q[nCurrentIteration]) || diffQ < (-0.05*q[nCurrentIteration]))
         {
             if (diffQ > 0.0)
             {
