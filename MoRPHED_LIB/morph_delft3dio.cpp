@@ -424,6 +424,14 @@ void MORPH_Delft3DIO::run()
                     {
                         QThread::currentThread()->sleep(2);
                     }
+                    else
+                    {
+                        qDebug()<<"delft data files written";
+                    }
+                }
+                else
+                {
+                    qDebug()<<"delft data files written";
                 }
                 count++;
                 exist1 = xvt.exists(), exist2 = yvt.exists(), exist3 = sst.exists(), exist4 = wdt.exists();
@@ -431,11 +439,15 @@ void MORPH_Delft3DIO::run()
                 {
                     qDebug()<<"Hydraulics files do not exist after 10 attempts\n";
                 }
+                else
+                {
+                    qDebug()<<"delft data files written";
+                }
             }
         }
         else
         {
-
+            qDebug()<<"delft data files written";
         }
     }
     else

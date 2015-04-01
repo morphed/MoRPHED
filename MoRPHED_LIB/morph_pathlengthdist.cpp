@@ -56,6 +56,8 @@ void MORPH_PathLengthDist::setupDistribution(double length, double sig_a, double
 
 void MORPH_PathLengthDist::setupDistribution()
 {
+    qvDist.clear();
+
     bool good = true;
     double factor;
     double sum = 0.0;

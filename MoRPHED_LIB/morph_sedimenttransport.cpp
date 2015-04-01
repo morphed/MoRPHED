@@ -897,7 +897,7 @@ void MORPH_SedimentTransport::findDepositionCells(int row, int col, double amt)
 
 void MORPH_SedimentTransport::importSediment()
 {
-    pathLength1.setupDistribution(450.0, 500.0, 225.0, 2, cellWidth);
+    pathLength1.setupDistribution(450.0, 400.0, 225.0, 2, cellWidth);
     qDebug()<<"pl reset for import"<<pathLength1.getLength()<< pathLength1.getSigA()<< pathLength1.getMuB();
 
     findImportCells();
