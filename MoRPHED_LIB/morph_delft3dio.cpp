@@ -459,9 +459,9 @@ void MORPH_Delft3DIO::run()
 void MORPH_Delft3DIO::runFlow()
 {
     QString flowCall = qsDelftPath + "/w32/flow/bin/deltares_hydro.exe " + qsFloodName + ".ini";
-    QString delftDir = qsInputPath + "/Delft3D";
+    //QString delftDir = qsInputPath + "/Delft3D";
     QProcess flowRun;
-    chdir(delftDir.toStdString().c_str());
+    chdir(qsDelftPath.toStdString().c_str());
     flowRun.execute(flowCall);
     flowRun.waitForFinished(-1);
 }
