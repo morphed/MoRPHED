@@ -868,7 +868,7 @@ void MORPH_SedimentTransport::findDepositionCells(int row, int col, double amt)
                 else if (p >=3 )
                 {
                     //deposit to 5x5 here
-                    depositTo5x5(row, col, (sediment*pathLength1.getValueAtPosition(p)));
+                    depositTo3x3(row, col, (sediment*pathLength1.getValueAtPosition(p)));
                 }
                 else
                 {
