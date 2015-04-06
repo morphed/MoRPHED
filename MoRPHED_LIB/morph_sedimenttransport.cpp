@@ -378,7 +378,7 @@ void MORPH_SedimentTransport::depositTo5x5(int row, int col, double amt)
     double reassign;
     int wetCellsOut, wetCellsIn, wetCells, dryCellsOut, dryCellsIn;
 
-    qvMatrix[0] = 0.08571, qvMatrix[1] = 0.054714, qvMatrix[2] = 0.02857;
+    qvMatrix[0] = 0.088, qvMatrix[1] = 0.054, qvMatrix[2] = 0.03;
     wetCells = 1, wetCellsIn = 0, wetCellsOut = 0, dryCellsIn = 0; dryCellsOut = 0;
 
     float *depWin = (float*) CPLMalloc(sizeof(float)*25);
@@ -868,7 +868,7 @@ void MORPH_SedimentTransport::findDepositionCells(int row, int col, double amt)
                 else if (p >=3 )
                 {
                     //deposit to 5x5 here
-                    depositTo3x3(row, col, (sediment*pathLength1.getValueAtPosition(p)));
+                    depositTo5x5(row, col, (sediment*pathLength1.getValueAtPosition(p)));
                 }
                 else
                 {
