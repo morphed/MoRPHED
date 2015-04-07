@@ -321,7 +321,7 @@ void MORPH_SedimentTransport::copyOutputs()
 void MORPH_SedimentTransport::depositTo3x3(int row, int col, double amt)
 {
     QVector<double> qvMatrix(2);
-    double reassign;
+    double reassign, total = 0.0;
     int wetCells, dryCells;
 
     qvMatrix[0] = 0.2;
@@ -361,12 +361,21 @@ void MORPH_SedimentTransport::depositTo3x3(int row, int col, double amt)
             if (i == 4)
             {
                 qvDepoAmt.append(amt * qvMatrix[0]);
+                total += (amt * qvMatrix[0]);
             }
             else
             {
                 qvDepoAmt.append(amt * qvMatrix[1]);
+                total += (amt * qvMatrix[1]);
             }
         }
+    }
+
+    if (total < amt || total > amt)
+    {
+        qvDepoRow.append(row);
+        qvDepoCol.append(col);
+        qvDepoAmt.append(amt-total);
     }
 
     CPLFree(depVal);
@@ -375,7 +384,7 @@ void MORPH_SedimentTransport::depositTo3x3(int row, int col, double amt)
 void MORPH_SedimentTransport::depositTo5x5(int row, int col, double amt)
 {
     QVector<double> qvMatrix(3);
-    double reassign;
+    double reassign, total = 0.0;
     int wetCellsOut, wetCellsIn, wetCells, dryCellsOut, dryCellsIn;
 
     qvMatrix[0] = 0.088, qvMatrix[1] = 0.054, qvMatrix[2] = 0.03;
@@ -411,6 +420,7 @@ void MORPH_SedimentTransport::depositTo5x5(int row, int col, double amt)
                 dryCellsIn++;
             }
         }
+
     }
 
     if ((dryCellsIn + dryCellsOut) > 0)
@@ -432,16 +442,26 @@ void MORPH_SedimentTransport::depositTo5x5(int row, int col, double amt)
             if (ROW_OFFSET5[i] == (-2) || ROW_OFFSET5[i] == (2) || COL_OFFSET5[i] == (-2) || COL_OFFSET5[i] == (2))
             {
                 qvDepoAmt.append(amt * qvMatrix[2]);
+                total += (amt*qvMatrix[2]);
             }
             else if (ROW_OFFSET5[i] == (-1) || ROW_OFFSET5[i] == (1) || COL_OFFSET5[i] == (-1) || COL_OFFSET5[i] == (1))
             {
                 qvDepoAmt.append(amt * qvMatrix[1]);
+                total += (amt*qvMatrix[1]);
             }
             else
             {
                 qvDepoAmt.append(amt * qvMatrix[0]);
+                total += (amt*qvMatrix[0]);
             }
         }
+    }
+
+    if (total < amt || total > amt)
+    {
+        qvDepoRow.append(row);
+        qvDepoCol.append(col);
+        qvDepoAmt.append(amt-total);
     }
 
     CPLFree(depWin);
