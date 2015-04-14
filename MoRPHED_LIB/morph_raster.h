@@ -38,6 +38,8 @@ public:
     void subtract(const char *subtractPath);
     void subtract(const char *sourcePath, const char *subtractPath);
     void subtract(const char *sourcePath, const char *subtractPath, const char *outputPath);
+    double sum();
+    double sum(const char *rasterPath);
     void zeroToNoData(const char *sourcePath, double noDataValue);
 protected:
 

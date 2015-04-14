@@ -92,6 +92,9 @@ void GUI_MainWindow::on_btn_run_clicked()
         qDebug()<<"flood done "<<i;
     }
 
+    delete(delft);
+    delete(trans);
+
     qDebug()<<"FINISHED!";
 }
 

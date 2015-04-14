@@ -34,7 +34,11 @@ public:
 
 private:
     double exported,
-            unaccounted;
+            unaccounted,
+            counterDepoEvent,
+            counterDepoTotal,
+            counterErodEvent,
+            counterErodTotal;
 
     QString qsXvelPath,
             qsYvelPath,
