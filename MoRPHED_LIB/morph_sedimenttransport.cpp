@@ -1414,7 +1414,7 @@ double MORPH_SedimentTransport::erodeBedFlow(double shearCrit, double shear, int
     ustar = sqrt(shear / RHO);
     ustarc = sqrt(shearCrit / RHO);
     bedvel = A * (ustar-ustarc);
-    sediment = 0.25 * (bedload / (bedvel * RHO_S * (1.0 - POROSITY)));
+    sediment = 0.5 * (bedload / (bedvel * RHO_S * (1.0 - POROSITY)));
 
     //setup location variables
     xCoord = transform[0] + (col * cellWidth);
@@ -2818,7 +2818,7 @@ void MORPH_SedimentTransport::runDeposition(const char *erosionRasterPath)
                         if (k==5 || k==7 || k==8 )
                         {
                             //qDebug()<<"depth at start cell: "<<dirWin[i];
-                            if (dirWin[i] > 0.0)
+                            if (dirWin[k] > 0.0)
                             {
                                 wetCells++;
                                 rows.append(i + ROW_OFFSET[k]);
@@ -2843,9 +2843,21 @@ void MORPH_SedimentTransport::runDeposition(const char *erosionRasterPath)
                     }
                     else
                     {
-                        unaccounted += fabs(erdRow[j]);
-                        calc = false;
-                        qDebug()<<"unaccounted "<<fabs(erdRow[j])<<" at "<<i<< j;
+                        for (int k=0; k<9; k++)
+                        {
+                            if (dirWin[k] > 0.0)
+                            {
+                                wetCells++;
+                                rows.append(i + ROW_OFFSET[k]);
+                                cols.append(j + COL_OFFSET[k]);
+                            }
+                        }
+                        if (wetCells == 0)
+                        {
+                            unaccounted += fabs(erdRow[j]);
+                            calc = false;
+                            qDebug()<<"unaccounted "<<fabs(erdRow[j])<<" at "<<i<< j;
+                        }
                     }
                 }
 

@@ -79,16 +79,12 @@ void GUI_MainWindow::on_btn_run_clicked()
         delft->run();
         qDebug()<<"done running delft "<<i;
 
-        //trans->setImportCells(delft->getDisRowVector(), delft->getDisColVector());
-        qDebug()<<"import cells set";
         trans->loadRasters();
         qDebug()<<"running bed erosion";
         trans->runBedErode();
         qDebug()<<"importing";
         trans->importSediment();
         qDebug()<<"import done";
-        qDebug()<<"priting outputs";
-        //trans->copyOutputs();
         qDebug()<<"flood done "<<i;
     }
 
