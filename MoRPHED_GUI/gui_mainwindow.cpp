@@ -49,6 +49,10 @@ void GUI_MainWindow::on_btn_outputs_clicked()
 
 void GUI_MainWindow::on_btn_run_clicked()
 {
+    QDateTime start, end, floodStart, floodEnd, delftStart, delftEnd, bankEStart, bankEEnd, bedEStart, bedEEnd;
+
+    start = QDateTime::currentDateTime();
+
     QFileInfo file(filenameXml);
 
     MORPH_FileManager fm(file.absolutePath());
@@ -58,11 +62,15 @@ void GUI_MainWindow::on_btn_run_clicked()
     for (int i=0; i<trans->getIterations(); i++)
     {
 
+        floodStart = QDateTime::currentDateTime();
         if (i == 0)
         {
             fm.createFloodDirectories(i);
             qDebug()<<"running delft";
+            delftStart = QDateTime::currentDateTime();
             delft->run();
+            delftEnd = QDateTime::currentDateTime();
+            qDebug()<<"DELFT TIME initial "<<delftStart.toString("hh:mm:ss")<< delftEnd.toString("hh:mm:ss")<< delftStart.secsTo(delftEnd)/60.0;
             qDebug()<<"delft done, load rasters";
             trans->loadRasters();
             qDebug()<<"rasters loaded";
@@ -73,20 +81,34 @@ void GUI_MainWindow::on_btn_run_clicked()
         trans->setCurrentIteration(i);
 
         qDebug()<<"running bank erosoin";
+        bankEStart = QDateTime::currentDateTime();
         trans->runBankErode();
+        bankEEnd = QDateTime::currentDateTime();
+        qDebug()<<"BANK TIME "<<bankEStart.toString("hh:mm:ss")<< bankEEnd.toString("hh:mm:ss")<< bankEStart.secsTo(bankEEnd)/60.0;
 
         qDebug()<<"running delft "<<i;
+        delftStart = QDateTime::currentDateTime();
         delft->run();
+        delftEnd = QDateTime::currentDateTime();
+        qDebug()<<"DELFT TIME "<<delftStart.toString("hh:mm:ss")<< delftEnd.toString("hh:mm:ss")<< delftStart.secsTo(delftEnd)/60.0;
         qDebug()<<"done running delft "<<i;
 
         trans->loadRasters();
         qDebug()<<"running bed erosion";
+        bedEStart = QDateTime::currentDateTime();
         trans->runBedErode();
+        bedEEnd = QDateTime::currentDateTime();
+        qDebug()<<"BED TIME "<<bedEStart.toString("hh:mm:ss")<< bedEEnd.toString("hh:mm:ss")<< bedEStart.secsTo(bedEEnd)/60.0;
         qDebug()<<"importing";
         trans->importSediment();
         qDebug()<<"import done";
         qDebug()<<"flood done "<<i;
+        floodEnd = QDateTime::currentDateTime();
+        qDebug()<<"FLOOD TIME "<<floodStart.toString("hh:mm:ss")<< floodEnd.toString("hh:mm:ss")<< floodStart.secsTo(floodEnd)/60.0;
     }
+
+    end = QDateTime::currentDateTime();
+    qDebug()<<"SIM TIME "<<start.toString("hh:mm:ss")<< end.toString("hh:mm:ss")<< start.secsTo(end)/60.0;
 
     delete(delft);
     delete(trans);

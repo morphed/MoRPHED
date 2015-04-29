@@ -875,6 +875,8 @@ void MORPH_Raster::subtract(const char *subtractPath)
 {
     GDALDataset *pSourceDS, *pSubtractDS;
 
+    loadDrivers();
+
     pSourceDS = (GDALDataset*) GDALOpen(m_rasterPath, GA_Update);
     pSubtractDS = (GDALDataset*) GDALOpen(subtractPath, GA_ReadOnly);
 
@@ -1005,7 +1007,7 @@ double MORPH_Raster::sum(const char *rasterPath)
 {
     setProperties(rasterPath);
 
-    sum();
+    return(sum());
 }
 
 void MORPH_Raster::zeroToNoData(const char *sourcePath, double noDataValue)

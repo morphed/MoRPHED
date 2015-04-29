@@ -373,6 +373,7 @@ void MORPH_Delft3DIO::run()
     processDelft.start(delftName, delftParams);
     processDelft.waitForFinished(-1);
     qDebug()<<"delft done";
+    QString qpQuit = "TASKKILL /F /IM d3d_qp.exec";
 
     QThread::currentThread()->sleep(2);
 
@@ -427,11 +428,13 @@ void MORPH_Delft3DIO::run()
                     else
                     {
                         qDebug()<<"delft data files written";
+                        processQp.execute(qpQuit);
                     }
                 }
                 else
                 {
                     qDebug()<<"delft data files written";
+                    processQp.execute(qpQuit);
                 }
                 count++;
                 exist1 = xvt.exists(), exist2 = yvt.exists(), exist3 = sst.exists(), exist4 = wdt.exists();
@@ -442,12 +445,14 @@ void MORPH_Delft3DIO::run()
                 else
                 {
                     qDebug()<<"delft data files written";
+                    processQp.execute(qpQuit);
                 }
             }
         }
         else
         {
             qDebug()<<"delft data files written";
+            processQp.execute(qpQuit);
         }
     }
     else
@@ -602,8 +607,7 @@ void MORPH_Delft3DIO::setDownstreamBoundary()
 {
     openSourceDEM();
 
-    int staticIndex, index1, index2, nCells;
-    int count = 0;
+    int staticIndex, index1 = 0, index2 = 0, nCells;
     bool found1 = false, found2 = false, found3 = false, found4 = false, found5 = false, found6 = false;
 
     float *row, *row2;
@@ -636,6 +640,9 @@ void MORPH_Delft3DIO::setDownstreamBoundary()
     }
 
     dsCoords.clear();
+
+    int count = 0;
+    qDebug()<<"no data"<< noData<<" ncells"<< nCells;
 
     while ((!found3 || !found6) && count<nCells)
     {
@@ -932,7 +939,7 @@ void MORPH_Delft3DIO::writeBND()
     fout.open(QIODevice::WriteOnly | QIODevice::Text);
     QTextStream out(&fout);
 
-    out<<"("<<dsCoords[0]<<","<<dsCoords[1]<<")..("<<dsCoords[2]<<","<<dsCoords[3]<<")    Z Q    "<<dsCoords[0]<<"    "<<dsCoords[1]<<"    "<<dsCoords[2]<<"    "<<dsCoords[3]<<"    0.0";
+    out<<"("<<dsCoords[0]<<","<<dsCoords[1]<<")..("<<dsCoords[2]<<","<<dsCoords[3]<<")      Z Q    "<<dsCoords[0]<<"    "<<dsCoords[1]<<"    "<<dsCoords[2]<<"    "<<dsCoords[3]<<"    0.0";
 
     fout.close();
 }

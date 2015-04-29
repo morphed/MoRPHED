@@ -57,7 +57,8 @@ private:
             qsLateralErode,
             qsBankErode,
             qsBankShear,
-            qsBankErodeInput;
+            qsBankErodeInput,
+            qsDodPath;
 
     QVector<int> qvSeedRow,
                 qvSeedCol,
@@ -77,6 +78,7 @@ private:
                 *pErodeRaster,
                 *pDepositRaster,
                 *pSlopeRaster,
+                *pDoD,
                 *pAspectRaster;
 
     MORPH_PathLengthDist pathLength1;
@@ -84,11 +86,13 @@ private:
     double averageShear_FlowLine(int row, int col, int cellsUS, int cellsDS);
     void clearDeposition();
     void clearErosion();
+    void createDoD();
     double erodeBedFlow(double shearCrit, double shear, int row, int col);
     void findImportCells();
     QVector<double> findNextCell(double startX, double startY, int prevRow, int prevCol);
     QVector<double> findNextCell_Backward(double startX, double startY, int prevRow, int prevCol);
     QVector<int> findNextCell_D8(int startRow, int startCol, int prevRow, int prevCol);
+    void fixDeposition(QString dodPath);
     void openDepositionRaster();
     void openDepthRaster();
     void openErosionRaster();
