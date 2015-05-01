@@ -935,16 +935,16 @@ void MORPH_SedimentTransport::importSediment()
 
     MORPH_Raster Raster;
 
-    qDebug()<<"adding import depo";
-    Raster.add(qsNewDemPath.toStdString().c_str(), qsDepoPath.toStdString().c_str());
-    qDebug()<<"import depo added";
-
     clearDeposition();
 
     qDebug()<<"creating dod";
     loadDrivers();
     createDoD();
     qDebug()<<"done";
+    path1 = qsOutputPath + "/" + qsFloodName + "/GTIFF/DoD_" + QString::number(nCurrentIteration+1) + "_temp.tif";
+
+    qDebug()<<"starting add";
+    Raster.add(qsNewDemPath.toStdString().c_str(), path1.toStdString().c_str());
 
     qDebug()<<"undeposited "<<unaccounted;
 
@@ -952,25 +952,13 @@ void MORPH_SedimentTransport::importSediment()
 
     QString path = qsOutputPath + "/" + qsFloodName + "/GTIFF/DEM_" + QString::number(nCurrentIteration+1) + ".tif";
 
-    //loadDrivers();
-    //openNewDem();
     qDebug()<<"copying new dem";
-    //pTemp = pDriverTIFF->CreateCopy(path.toStdString().c_str(), pNewDem, FALSE, NULL, NULL, NULL);
     QFile::copy(qsNewDemPath, path);
     qDebug()<<"deleting old dem "<<qsOldDemPath;
     GDALDeleteDataset(pDriverTIFF, qsOldDemPath.toStdString().c_str());
     qDebug()<<"old dem deleted";
-    //pTemp2 = pDriverTIFF->CreateCopy(qsOldDemPath.toStdString().c_str(), pNewDem, FALSE, NULL, NULL, NULL);
     QFile::copy(qsNewDemPath, qsOldDemPath);
-    qDebug()<<"new dem to old dem";
 
-    qDebug()<<"closing new dem";
-    //GDALClose(pNewDem);
-    qDebug()<<"new dem closed";
-    //GDALClose(pTemp);
-    qDebug()<<"temp closed";
-    //GDALClose(pTemp2);
-    qDebug()<<"temp 2 closed";
 
     qDebug()<<"deposition "<<counterDepoEvent<< counterDepoTotal;
     qDebug()<<"deposition "<<counterErodEvent<< counterErodTotal;
@@ -1188,7 +1176,7 @@ void MORPH_SedimentTransport::runBedErode()
     QString path = qsOutputPath + "/" + qsFloodName + "/GTIFF/BankErosion" + QString::number(nCurrentIteration+1) + ".tif";
     runDeposition(path.toStdString().c_str());
     qDebug()<<"bank depo done";
-    Raster.add(qsNewDemPath.toStdString().c_str(), qsDepoPath.toStdString().c_str());
+    //Raster.add(qsNewDemPath.toStdString().c_str(), qsDepoPath.toStdString().c_str());
     qDebug()<<"bank depo added";
     openDepositionRaster();
     GDALDataset *pTemp;
@@ -1287,7 +1275,7 @@ void MORPH_SedimentTransport::runBedErode()
     GDALClose(pTemp);
 
     //subtract the filtered erosoin from the new DEM
-    Raster.subtract(qsNewDemPath.toStdString().c_str(), qsErodeFilterPath.toStdString().c_str());
+    //Raster.subtract(qsNewDemPath.toStdString().c_str(), qsErodeFilterPath.toStdString().c_str());
     qDebug()<<"summing erosion from bed";
     //double sum = Raster.sum(qsErodePath.toStdString().c_str());
     qDebug()<<"done";
@@ -1299,7 +1287,7 @@ void MORPH_SedimentTransport::runBedErode()
 
     //deposit eroded sediment
     runDeposition(qsErodeFilterPath.toStdString().c_str());
-    Raster.add(qsNewDemPath.toStdString().c_str(), qsDepoPath.toStdString().c_str());
+    //Raster.add(qsNewDemPath.toStdString().c_str(), qsDepoPath.toStdString().c_str());
 
     openDepositionRaster();
     path = qsOutputPath + "/" + qsFloodName + "/GTIFF/BedDeposition" + QString::number(nCurrentIteration+1) + ".tif";
@@ -1448,7 +1436,7 @@ void MORPH_SedimentTransport::createDoD()
     bedErode = qsOutputPath + "/" + qsFloodName + "/GTIFF/BedErosion" + QString::number(nCurrentIteration+1) + ".tif";
     bankDepo = qsOutputPath + "/" + qsFloodName + "/GTIFF/BankDeposition" + QString::number(nCurrentIteration+1) + ".tif";
     bedDepo = qsOutputPath + "/" + qsFloodName + "/GTIFF/BedDeposition" + QString::number(nCurrentIteration+1) + ".tif";
-    dodPath = qsOutputPath + "/" + qsFloodName + "/GTIFF/DoD_" + QString::number(nCurrentIteration+1) + ".tif";
+    dodPath = qsOutputPath + "/" + qsFloodName + "/GTIFF/DoD_" + QString::number(nCurrentIteration+1) + "_temp.tif";
     importDepo = qsOutputPath + "/" + qsFloodName + "/GTIFF/ImportDepo" + QString::number(nCurrentIteration+1) + ".tif";
 
     pDemOfDiff = pDriverTIFF->Create(dodPath.toStdString().c_str(), nCols, nRows, 1, GDT_Float32, NULL);
