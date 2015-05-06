@@ -18,7 +18,6 @@ MORPH_Raster::~MORPH_Raster()
 
 void MORPH_Raster::add(const char *addPath)
 {
-    qDebug()<<"in add";
     GDALDataset *pSourceDS, *pAddDS;
 
     pSourceDS = (GDALDataset*) GDALOpen(m_rasterPath, GA_Update);
@@ -28,7 +27,6 @@ void MORPH_Raster::add(const char *addPath)
     float *addRow = (float*) CPLMalloc(sizeof(float)*nCols);
     float *newRow = (float*) CPLMalloc(sizeof(float)*nCols);
 
-    qDebug()<<"starting add loop";
     for (int i=0; i<nRows; i++)
     {
         pSourceDS->GetRasterBand(1)->RasterIO(GF_Read, 0, i, nCols, 1, srcRow, nCols, 1, GDT_Float32, 0, 0);
@@ -52,7 +50,6 @@ void MORPH_Raster::add(const char *addPath)
 
         pSourceDS->GetRasterBand(1)->RasterIO(GF_Write, 0, i, nCols, 1, newRow, nCols, 1, GDT_Float32, 0, 0);
     }
-    qDebug()<<"add loop done";
 
     GDALClose(pSourceDS);
     GDALClose(pAddDS);
@@ -808,7 +805,6 @@ int MORPH_Raster::regions(const char *inputRaster, const char *regionsRaster)
 void MORPH_Raster::setProperties(const char *rasterPath)
 {
     loadDrivers();
-    qDebug()<<rasterPath;
 
     m_rasterPath = rasterPath;
     GDALDataset *pRaster = (GDALDataset*) GDALOpen(m_rasterPath, GA_ReadOnly);
