@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>886</width>
-    <height>838</height>
+    <height>686</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,7 +19,7 @@
      <x>281</x>
      <y>404</y>
      <width>600</width>
-     <height>386</height>
+     <height>221</height>
     </rect>
    </property>
    <property name="sizePolicy">
@@ -329,7 +329,7 @@
          <enum>Qt::Horizontal</enum>
         </property>
         <property name="sizeType">
-         <enum>QSizePolicy::Fixed</enum>
+         <enum>QSizePolicy::Expanding</enum>
         </property>
         <property name="sizeHint" stdset="0">
          <size>
@@ -340,7 +340,14 @@
        </spacer>
       </item>
       <item>
-       <widget class="QDoubleSpinBox" name="spinDbl_mu_3"/>
+       <widget class="QDoubleSpinBox" name="spinDbl_mu_3">
+        <property name="minimumSize">
+         <size>
+          <width>53</width>
+          <height>0</height>
+         </size>
+        </property>
+       </widget>
       </item>
      </layout>
     </item>
@@ -373,11 +380,11 @@
     </item>
    </layout>
   </widget>
-  <widget class="QWidget" name="">
+  <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
-     <x>680</x>
-     <y>800</y>
+     <x>660</x>
+     <y>640</y>
      <width>204</width>
      <height>25</height>
     </rect>

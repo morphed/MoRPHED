@@ -1483,7 +1483,7 @@ double MORPH_SedimentTransport::erodeBedFlow(double shearCrit, double shear, int
     ustar = sqrt(shear / RHO);
     ustarc = sqrt(shearCrit / RHO);
     bedvel = A * (ustar-ustarc);
-    sediment = 0.5 * (bedload / (bedvel * RHO_S * (1.0 - POROSITY)));
+    sediment = 1.0 * (bedload / (bedvel * RHO_S * (1.0 - POROSITY)));
 
     //setup location variables
     xCoord = transform[0] + (col * cellWidth);
