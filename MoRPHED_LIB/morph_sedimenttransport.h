@@ -30,6 +30,7 @@ public:
     void runBankErode();
     void runBedErode();
     void setImportCells(QVector<int> rows, QVector<int> cols);
+    void sloughBanks();
     void transportSediment();
 
 private:
@@ -38,7 +39,8 @@ private:
             counterDepoEvent,
             counterDepoTotal,
             counterErodEvent,
-            counterErodTotal;
+            counterErodTotal,
+            maxSlope;
 
     QString qsXvelPath,
             qsYvelPath,

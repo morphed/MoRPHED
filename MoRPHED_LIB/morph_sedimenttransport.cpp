@@ -9,6 +9,12 @@ MORPH_SedimentTransport::MORPH_SedimentTransport(QString xmlPath) : MORPH_Base(x
     counterErodTotal = 0.0;
     counterDepoEvent = 0.0;
     counterErodEvent = 0.0;
+
+    MORPH_Raster Raster;
+    QString path = qsTempPath + "/slope_init.tif";
+    Raster.slopeTOF(qsOldDemPath.toStdString().c_str(), path.toStdString().c_str());
+    maxSlope = Raster.findMax(path.toStdString().c_str());
+    qDebug()<<"max slope "<<maxSlope;
 }
 
 void MORPH_SedimentTransport::addDeposition()
@@ -182,6 +188,7 @@ void MORPH_SedimentTransport::calcLateralRetreat()
     GDALClose(pBankShear);
     GDALClose(pSlopeFilt);
     GDALClose(pRetreat);
+    GDALClose(pSlopeRaster);
 
     CPLFree(shrRow);
     CPLFree(slpRow);
@@ -946,6 +953,9 @@ void MORPH_SedimentTransport::importSediment()
     qDebug()<<"starting add";
     Raster.add(qsNewDemPath.toStdString().c_str(), path1.toStdString().c_str());
 
+    sloughBanks();
+    qDebug()<<"slough done, print undeposited";
+
     qDebug()<<"undeposited "<<unaccounted;
 
     //GDALDataset *pTemp, *pTemp2;
@@ -1313,6 +1323,117 @@ void MORPH_SedimentTransport::setImportCells(QVector<int> rows, QVector<int> col
 {
     qvImportRow = rows;
     qvImportCol = cols;
+}
+
+void MORPH_SedimentTransport::sloughBanks()
+{
+    qDebug()<<"starting slough";
+    bool stop = false;
+    int iterCount = 0, changedCount, lowCount;
+    double amount, tempAmt;
+
+    MORPH_Raster Raster;
+    Raster.slopeTOF(qsNewDemPath.toStdString().c_str(), qsSlopePath.toStdString().c_str());
+
+    pSlopeRaster = (GDALDataset*) GDALOpen(qsSlopePath.toStdString().c_str(), GA_Update);
+    openNewDem();
+
+    float *demVals = (float*) CPLMalloc(sizeof(float)*9);
+    float *slpVals = (float*) CPLMalloc(sizeof(float)*9);
+    float *slpVal = (float*) CPLMalloc(sizeof(float)*1);
+    float *newVals = (float*) CPLMalloc(sizeof(float)*9);
+    qDebug()<<"slough loop";
+
+    while (!stop && iterCount < 50)
+    {
+        changedCount = 0;
+
+        for (int i=2; i<nRows-2; i++)
+        {
+            for (int j=2; j<nCols-2; j++)
+            {
+                pSlopeRaster->GetRasterBand(1)->RasterIO(GF_Read, j, i, 1, 1, slpVal, 1, 1, GDT_Float32, 0, 0);
+
+                if (*slpVal > maxSlope && *slpVal != noData)
+                {
+                    changedCount++;
+                    pNewDem->GetRasterBand(1)->RasterIO(GF_Read, j-1, i-1, 3, 3, demVals, 3, 3, GDT_Float32, 0, 0);
+                    lowCount = 0;
+                    amount = 0;
+
+                    for (int k=0; k<9; k++)
+                    {
+                        if (demVals[k] != noData && demVals[k]>demVals[4])
+                        {
+                            tempAmt = ((demVals[k] - demVals[4]) * 0.08);
+                            amount = amount + tempAmt;
+                        }
+                        else if (demVals[k] < demVals[4] && demVals[k] != noData)
+                        {
+                            lowCount++;
+                        }
+                    }
+
+                    for (int k=0; k<9; k++)
+                    {
+                        if (demVals[k] != noData && demVals[k] < demVals[4])
+                        {
+                            newVals[k] = demVals[k] + (amount/(lowCount*1.0));
+                        }
+                        else
+                        {
+                            newVals[k] = demVals[k];
+                        }
+                    }
+
+                    pNewDem->GetRasterBand(1)->RasterIO(GF_Write, j-1, i-1, 3, 3, newVals, 3, 3, GDT_Float32, 0, 0);
+
+                    for (int k=0; k<9; k++)
+                    {
+                        double xslope, yslope, xyslope, xypow;
+
+                        if (newVals[4] == noData || newVals[0] == noData || newVals[1] == noData || newVals[2] == noData || newVals[3] == noData || newVals[5] == noData || newVals[6] == noData || newVals[7] == noData || newVals[8] == noData)
+                        {
+                            slpVals[j] = noData;
+                        }
+                        else
+                        {
+                            xslope = ((newVals[2]-newVals[0]) + ((2*newVals[5])-(2*newVals[3])) + (newVals[8]-newVals[6])) / (8*transform[1]);
+                            yslope = ((newVals[0]-newVals[6]) + ((2*newVals[1])-(2*newVals[7])) + (newVals[2]-newVals[8]))/(8*transform[1]);
+                            xyslope = pow(xslope,2.0) + pow(yslope,2.0);
+                            xypow = pow(xyslope,0.5);
+                            slpVals[j] = (atan(xypow)*180.0/PI);
+                        }
+                    }
+
+                    pSlopeRaster->GetRasterBand(1)->RasterIO(GF_Write, j-1, i-1, 3, 3, slpVal, 3, 3, GDT_Float32, 0, 0);
+                    changedCount = 0;
+                }
+            }
+        }
+
+        if (changedCount == 0)
+        {
+            stop = true;
+        }
+
+        iterCount++;
+        qDebug()<<"slough iteration done "<<iterCount<<" changed "<<changedCount<<" max slp "<<maxSlope;
+    }
+
+
+    GDALAllRegister();
+    qDebug()<<"gdal registered";
+    GDALClose(pSlopeRaster);
+    qDebug()<<"slope closed";
+    GDALClose(pNewDem);
+    qDebug()<<"dem closed";
+
+    CPLFree(demVals);
+    CPLFree(slpVal);
+    CPLFree(newVals);
+
+    qDebug()<<"slough finished";
 }
 
 void MORPH_SedimentTransport::transportSediment()
