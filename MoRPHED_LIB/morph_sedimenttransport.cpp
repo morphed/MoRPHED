@@ -965,7 +965,8 @@ void MORPH_SedimentTransport::importSediment()
     qDebug()<<"copying new dem";
     QFile::copy(qsNewDemPath, path);
     qDebug()<<"deleting old dem "<<qsOldDemPath;
-    GDALDeleteDataset(pDriverTIFF, qsOldDemPath.toStdString().c_str());
+    //GDALDeleteDataset(pDriverTIFF, qsOldDemPath.toStdString().c_str());
+    QFile::remove(qsOldDemPath);
     qDebug()<<"old dem deleted";
     QFile::copy(qsNewDemPath, qsOldDemPath);
 
@@ -1327,9 +1328,10 @@ void MORPH_SedimentTransport::setImportCells(QVector<int> rows, QVector<int> col
 
 void MORPH_SedimentTransport::sloughBanks()
 {
+    loadDrivers();
     qDebug()<<"starting slough";
     bool stop = false;
-    int iterCount = 0, changedCount, lowCount;
+    int iterCount = 0, changedCount, lowCount, highCount;
     double amount, tempAmt;
 
     MORPH_Raster Raster;
@@ -1358,8 +1360,8 @@ void MORPH_SedimentTransport::sloughBanks()
                 {
                     changedCount++;
                     pNewDem->GetRasterBand(1)->RasterIO(GF_Read, j-1, i-1, 3, 3, demVals, 3, 3, GDT_Float32, 0, 0);
-                    lowCount = 0;
-                    amount = 0;
+                    lowCount = 0, highCount = 0;
+                    amount = 0.0, tempAmt = 0.0;
 
                     for (int k=0; k<9; k++)
                     {
@@ -1367,6 +1369,7 @@ void MORPH_SedimentTransport::sloughBanks()
                         {
                             tempAmt = ((demVals[k] - demVals[4]) * 0.08);
                             amount = amount + tempAmt;
+                            highCount++;
                         }
                         else if (demVals[k] < demVals[4] && demVals[k] != noData)
                         {
@@ -1380,6 +1383,10 @@ void MORPH_SedimentTransport::sloughBanks()
                         {
                             newVals[k] = demVals[k] + (amount/(lowCount*1.0));
                         }
+                        else if (demVals[k] != noData && demVals[k]>demVals[4])
+                        {
+                            newVals[k] = demVals[k] - ((demVals[k] - demVals[4]) * 0.08);
+                        }
                         else
                         {
                             newVals[k] = demVals[k];
@@ -1390,6 +1397,12 @@ void MORPH_SedimentTransport::sloughBanks()
 
                     for (int k=0; k<9; k++)
                     {
+                        int row, col;
+                        row = i + ROW_OFFSET[k];
+                        col = j + COL_OFFSET[k];
+
+                        pNewDem->GetRasterBand(1)->RasterIO(GF_Read, col-1, row-1, 3, 3, newVals, 3, 3, GDT_Float32, 0, 0);
+
                         double xslope, yslope, xyslope, xypow;
 
                         if (newVals[4] == noData || newVals[0] == noData || newVals[1] == noData || newVals[2] == noData || newVals[3] == noData || newVals[5] == noData || newVals[6] == noData || newVals[7] == noData || newVals[8] == noData)
@@ -1402,11 +1415,11 @@ void MORPH_SedimentTransport::sloughBanks()
                             yslope = ((newVals[0]-newVals[6]) + ((2*newVals[1])-(2*newVals[7])) + (newVals[2]-newVals[8]))/(8*transform[1]);
                             xyslope = pow(xslope,2.0) + pow(yslope,2.0);
                             xypow = pow(xyslope,0.5);
-                            slpVals[j] = (atan(xypow)*180.0/PI);
+                            slpVals[k] = (atan(xypow)*180.0/PI);
                         }
                     }
 
-                    pSlopeRaster->GetRasterBand(1)->RasterIO(GF_Write, j-1, i-1, 3, 3, slpVal, 3, 3, GDT_Float32, 0, 0);
+                    pSlopeRaster->GetRasterBand(1)->RasterIO(GF_Write, j-1, i-1, 3, 3, slpVals, 3, 3, GDT_Float32, 0, 0);
                     changedCount = 0;
                 }
             }
@@ -1422,14 +1435,15 @@ void MORPH_SedimentTransport::sloughBanks()
     }
 
 
-    GDALAllRegister();
-    qDebug()<<"gdal registered";
+    //GDALAllRegister();
+    //qDebug()<<"gdal registered";
     GDALClose(pSlopeRaster);
     qDebug()<<"slope closed";
     GDALClose(pNewDem);
     qDebug()<<"dem closed";
 
     CPLFree(demVals);
+    CPLFree(slpVals);
     CPLFree(slpVal);
     CPLFree(newVals);
 
