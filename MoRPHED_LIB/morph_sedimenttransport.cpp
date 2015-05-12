@@ -14,6 +14,7 @@ MORPH_SedimentTransport::MORPH_SedimentTransport(QString xmlPath) : MORPH_Base(x
     QString path = qsTempPath + "/slope_init.tif";
     Raster.slopeTOF(qsOldDemPath.toStdString().c_str(), path.toStdString().c_str());
     maxSlope = Raster.findMax(path.toStdString().c_str());
+    maxSlope = 35.0;
     qDebug()<<"max slope "<<maxSlope;
 }
 
@@ -1334,6 +1335,8 @@ void MORPH_SedimentTransport::sloughBanks()
     int iterCount = 0, changedCount, lowCount, highCount;
     double amount, tempAmt;
 
+    QFile::remove(qsSlopePath);
+
     MORPH_Raster Raster;
     Raster.slopeTOF(qsNewDemPath.toStdString().c_str(), qsSlopePath.toStdString().c_str());
 
@@ -1356,8 +1359,9 @@ void MORPH_SedimentTransport::sloughBanks()
             {
                 pSlopeRaster->GetRasterBand(1)->RasterIO(GF_Read, j, i, 1, 1, slpVal, 1, 1, GDT_Float32, 0, 0);
 
-                if (*slpVal > maxSlope && *slpVal != noData)
+                if (*slpVal>maxSlope && *slpVal!=noData)
                 {
+                    //qDebug()<<"doing slough "<<*slpVal<< changedCount;
                     changedCount++;
                     pNewDem->GetRasterBand(1)->RasterIO(GF_Read, j-1, i-1, 3, 3, demVals, 3, 3, GDT_Float32, 0, 0);
                     lowCount = 0, highCount = 0;
@@ -1365,13 +1369,13 @@ void MORPH_SedimentTransport::sloughBanks()
 
                     for (int k=0; k<9; k++)
                     {
-                        if (demVals[k] != noData && demVals[k]>demVals[4])
+                        if (demVals[k]!=noData && demVals[k]>demVals[4])
                         {
                             tempAmt = ((demVals[k] - demVals[4]) * 0.08);
                             amount = amount + tempAmt;
                             highCount++;
                         }
-                        else if (demVals[k] < demVals[4] && demVals[k] != noData)
+                        else if (demVals[k]<demVals[4] && demVals[k]!=noData)
                         {
                             lowCount++;
                         }
@@ -1379,11 +1383,11 @@ void MORPH_SedimentTransport::sloughBanks()
 
                     for (int k=0; k<9; k++)
                     {
-                        if (demVals[k] != noData && demVals[k] < demVals[4])
+                        if (demVals[k]!=noData && demVals[k]<demVals[4])
                         {
                             newVals[k] = demVals[k] + (amount/(lowCount*1.0));
                         }
-                        else if (demVals[k] != noData && demVals[k]>demVals[4])
+                        else if (demVals[k]!=noData && demVals[k]>demVals[4])
                         {
                             newVals[k] = demVals[k] - ((demVals[k] - demVals[4]) * 0.08);
                         }
@@ -1420,7 +1424,6 @@ void MORPH_SedimentTransport::sloughBanks()
                     }
 
                     pSlopeRaster->GetRasterBand(1)->RasterIO(GF_Write, j-1, i-1, 3, 3, slpVals, 3, 3, GDT_Float32, 0, 0);
-                    changedCount = 0;
                 }
             }
         }
@@ -1618,7 +1621,7 @@ double MORPH_SedimentTransport::erodeBedFlow(double shearCrit, double shear, int
     ustar = sqrt(shear / RHO);
     ustarc = sqrt(shearCrit / RHO);
     bedvel = A * (ustar-ustarc);
-    sediment = 1.0 * (bedload / (bedvel * RHO_S * (1.0 - POROSITY)));
+    sediment = 0.5 * (bedload / (bedvel * RHO_S * (1.0 - POROSITY)));
 
     //setup location variables
     xCoord = transform[0] + (col * cellWidth);
