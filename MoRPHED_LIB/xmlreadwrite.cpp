@@ -268,15 +268,7 @@ void XMLReadWrite::writeXMLdocGUI()
     createNewElement("Delft3DParameters");
     createNewElement("Delft3DParameters", "DelftPath");
     createNewElement("Delft3DParameters", "USBoundLocation");
-    createNewElement("Delft3DParameters", "USX1");
-    createNewElement("Delft3DParameters", "USX2");
-    createNewElement("Delft3DParameters", "USY1");
-    createNewElement("Delft3DParameters", "USY2");
     createNewElement("Delft3DParameters", "DSBoundLocation");
-    createNewElement("Delft3DParameters", "DSX1");
-    createNewElement("Delft3DParameters", "DSX2");
-    createNewElement("Delft3DParameters", "DSY1");
-    createNewElement("Delft3DParameters", "DSY2");
     createNewElement("Delft3DParameters", "SimTime");
     createNewElement("Delft3DParameters", "TimeStep");
     createNewElement("Delft3DParameters", "Roughness");

@@ -5,9 +5,12 @@ dialog_inputs::dialog_inputs(XMLReadWrite &XmlObj, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::dialog_inputs)
 {
-    XmlDoc = XmlObj;
-
     ui->setupUi(this);
+
+    XmlDoc = XmlObj;
+    closeOk = true;
+
+    readXml();
 }
 
 dialog_inputs::~dialog_inputs()
@@ -22,7 +25,17 @@ void dialog_inputs::on_btn_cancel_clicked()
 
 void dialog_inputs::on_btn_ok_clicked()
 {
-    this->close();
+    writeXml();
+
+    checkClose();
+}
+
+void dialog_inputs::checkClose()
+{
+    if (closeOk)
+    {
+        this->close();
+    }
 }
 
 void dialog_inputs::readXml()
@@ -41,7 +54,7 @@ void dialog_inputs::readXml()
     if (!nodeData.isNull() || !nodeData.isEmpty())
     {
         qsHydroSedi = nodeData;
-        ui->line_dem->setText(qsHydroSedi);
+        ui->line_input->setText(qsHydroSedi);
     }
 
     nodeData = XmlDoc.readNodeData("Inputs", "ImportType");
@@ -59,6 +72,93 @@ void dialog_inputs::readXml()
         {
             ui->rbtn_proportion->setChecked(true);
             ui->rbtn_volume->setChecked(false);
+        }
+    }
+}
+
+void dialog_inputs::writeXml()
+{
+    closeOk = true;
+
+    if (ui->rbtn_volume->isChecked())
+    {
+        nImportType = 1;
+    }
+    else if (ui->rbtn_proportion->isChecked())
+    {
+        nImportType = 2;
+    }
+    else
+    {
+        nImportType = 0;
+        closeOk = false;
+        QMessageBox::information(this, "Invalid Import Type", "Please select an option for importing sediment");
+    }
+
+    if (qsDem.isNull() || qsDem.isEmpty())
+    {
+        closeOk = false;
+        QMessageBox::information(this, "Invalid DEM path", "Please enter a valid DEM path");
+    }
+
+    if (qsHydroSedi.isNull() || qsHydroSedi.isEmpty())
+    {
+        closeOk = false;
+        QMessageBox::information(this, "Invalid Input path", "Please enter a valid Input path");
+    }
+
+    XmlDoc.writeNodeData("Inputs", "DEMPath", qsDem);
+    XmlDoc.writeNodeData("Inputs", "HydroSediPath", qsHydroSedi);
+    XmlDoc.writeNodeData("Inputs", "ImportType", QString::number(nImportType));
+
+    XmlDoc.printXML();
+}
+
+void dialog_inputs::on_line_dem_textChanged(const QString &arg1)
+{
+    qsDem = arg1;
+}
+
+void dialog_inputs::on_line_input_textEdited(const QString &arg1)
+{
+    qsHydroSedi = arg1;
+}
+
+void dialog_inputs::on_btn_graph_clicked()
+{
+
+}
+
+void dialog_inputs::on_tbtn_dem_clicked()
+{
+    QString filename = QFileDialog::getOpenFileName(this, "Select DEM");
+
+    if (!filename.isNull() || !filename.isEmpty())
+    {
+        QFile file(filename);
+
+        if (file.exists())
+        {
+            QFileInfo fi(file);
+            qsDem = filename;
+            ui->line_dem->setText(qsDem);
+        }
+    }
+}
+
+void dialog_inputs::on_tbtn_input_clicked()
+{
+    QString filename = QFileDialog::getOpenFileName(this, "Select DEM");
+
+    if (!filename.isNull() || !filename.isEmpty())
+    {
+        QFile file(filename);
+
+        if (file.exists())
+        {
+            QFileInfo fi(file);
+            qsHydroSedi = filename;
+            ui->line_input->setText(qsHydroSedi);
         }
     }
 }

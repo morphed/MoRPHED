@@ -71,7 +71,7 @@
        </spacer>
       </item>
       <item>
-       <widget class="QDoubleSpinBox" name="spinDbl_length_2"/>
+       <widget class="QDoubleSpinBox" name="spinDbl_length2"/>
       </item>
      </layout>
     </item>
@@ -108,7 +108,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QDoubleSpinBox" name="spinDbl_a_2"/>
+       <widget class="QDoubleSpinBox" name="spinDbl_a2"/>
       </item>
       <item>
        <spacer name="horizontalSpacer_8">
@@ -131,7 +131,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QDoubleSpinBox" name="spinDbl_b_2"/>
+       <widget class="QDoubleSpinBox" name="spinDbl_b2"/>
       </item>
      </layout>
     </item>
@@ -168,7 +168,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QDoubleSpinBox" name="spinDbl_mu_2"/>
+       <widget class="QDoubleSpinBox" name="spinDbl_mu2"/>
       </item>
       <item>
        <spacer name="horizontalSpacer_10">
@@ -191,7 +191,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QDoubleSpinBox" name="spinDbl_sigma_2"/>
+       <widget class="QDoubleSpinBox" name="spinDbl_sigma2"/>
       </item>
      </layout>
     </item>
@@ -240,7 +240,7 @@
        </spacer>
       </item>
       <item>
-       <widget class="QDoubleSpinBox" name="spinDbl_length_3"/>
+       <widget class="QDoubleSpinBox" name="spinDbl_slp"/>
       </item>
      </layout>
     </item>
@@ -270,7 +270,7 @@
        </spacer>
       </item>
       <item>
-       <widget class="QDoubleSpinBox" name="spinDbl_a_3">
+       <widget class="QDoubleSpinBox" name="spinDbl_shr">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
           <horstretch>0</horstretch>
@@ -310,7 +310,7 @@
        </spacer>
       </item>
       <item>
-       <widget class="QDoubleSpinBox" name="spinDbl_b_3"/>
+       <widget class="QDoubleSpinBox" name="spinDbl_area"/>
       </item>
      </layout>
     </item>
@@ -340,7 +340,7 @@
        </spacer>
       </item>
       <item>
-       <widget class="QDoubleSpinBox" name="spinDbl_mu_3">
+       <widget class="QDoubleSpinBox" name="spinDbl_erosion">
         <property name="minimumSize">
          <size>
           <width>53</width>
@@ -374,7 +374,7 @@
        </spacer>
       </item>
       <item>
-       <widget class="QDoubleSpinBox" name="spinDbl_sigma_3"/>
+       <widget class="QDoubleSpinBox" name="spinDbl_gs"/>
       </item>
      </layout>
     </item>
@@ -455,7 +455,7 @@
        </spacer>
       </item>
       <item>
-       <widget class="QDoubleSpinBox" name="spinDbl_length"/>
+       <widget class="QDoubleSpinBox" name="spinDbl_length1"/>
       </item>
      </layout>
     </item>
@@ -492,7 +492,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QDoubleSpinBox" name="spinDbl_a"/>
+       <widget class="QDoubleSpinBox" name="spinDbl_a1"/>
       </item>
       <item>
        <spacer name="horizontalSpacer_2">
@@ -515,7 +515,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QDoubleSpinBox" name="spinDbl_b"/>
+       <widget class="QDoubleSpinBox" name="spinDbl_b1"/>
       </item>
      </layout>
     </item>
@@ -552,7 +552,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QDoubleSpinBox" name="spinDbl_mu"/>
+       <widget class="QDoubleSpinBox" name="spinDbl_mu1"/>
       </item>
       <item>
        <spacer name="horizontalSpacer_5">
@@ -575,7 +575,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QDoubleSpinBox" name="spinDbl_sigma"/>
+       <widget class="QDoubleSpinBox" name="spinDbl_sigma1"/>
       </item>
      </layout>
     </item>

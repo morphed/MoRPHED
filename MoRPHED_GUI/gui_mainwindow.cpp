@@ -37,7 +37,7 @@ void GUI_MainWindow::on_btn_morphParam_clicked()
 
 void GUI_MainWindow::on_btn_delftParam_clicked()
 {
-    dialog_delftParams dialog(this);
+    dialog_delftParams dialog(XmlGui, this);
     dialog.setModal(true);
     dialog.exec();
 }

@@ -20,5 +20,13 @@ void dialog_morphParams::on_btn_cancel_clicked()
 
 void dialog_morphParams::on_btn_ok_clicked()
 {
-    this->close();
+    checkClose();
+}
+
+void dialog_morphParams::checkClose()
+{
+    if (closeOk)
+    {
+        this->close();
+    }
 }

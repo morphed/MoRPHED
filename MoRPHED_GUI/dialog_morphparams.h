@@ -22,6 +22,10 @@ private slots:
 
 private:
     Ui::dialog_morphParams *ui;
+
+    bool closeOk;
+
+    void checkClose();
 };
 
 #endif // DIALOG_MORPHPARAMS_H
