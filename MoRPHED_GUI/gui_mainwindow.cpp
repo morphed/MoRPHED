@@ -23,7 +23,7 @@ void GUI_MainWindow::on_btn_description_clicked()
 
 void GUI_MainWindow::on_btn_inputs_clicked()
 {
-    dialog_inputs dialog(this);
+    dialog_inputs dialog(XmlGui, this);
     dialog.setModal(true);
     dialog.exec();
 }
@@ -133,6 +133,7 @@ void GUI_MainWindow::on_actionNew_Project_triggered()
         XmlGui.writeNodeData("ProjectDirectory",filename);
         list = filename.split("/");
         name = list[list.size()-1];
+        baseDir = filename;
         filenameXml = filename + "/" + name + ".morph";
         XmlGui.setDocumentFilename(filenameXml);
     }
@@ -143,6 +144,7 @@ void GUI_MainWindow::on_actionOpen_Project_triggered()
     QString filename;
     filename = QFileDialog::getOpenFileName(this, "Select *.morph file to open");
     filenameXml = filename;
+    QFileInfo file(filename);
 
     if (filename.isNull() || filename.isEmpty())
     {
@@ -150,6 +152,8 @@ void GUI_MainWindow::on_actionOpen_Project_triggered()
     }
     else
     {
+        baseDir = file.absolutePath();
         XmlGui.loadDocument(filename, 1);
+        XmlGui.writeNodeData("ProjectDirectory",baseDir);
     }
 }

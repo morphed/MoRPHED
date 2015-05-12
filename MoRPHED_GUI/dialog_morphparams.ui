@@ -222,7 +222,7 @@
       <item>
        <widget class="QLabel" name="label_11">
         <property name="text">
-         <string>Slope Threshold</string>
+         <string>Slope Threshold (deg)</string>
         </property>
        </widget>
       </item>
@@ -249,7 +249,7 @@
       <item>
        <widget class="QLabel" name="label_12">
         <property name="text">
-         <string>Shear Stress Threshold</string>
+         <string>Shear Stress Threshold (Nm^2)</string>
         </property>
        </widget>
       </item>
@@ -292,7 +292,7 @@
       <item>
        <widget class="QLabel" name="label_13">
         <property name="text">
-         <string>Area Threshold</string>
+         <string>Area Threshold (m^2)</string>
         </property>
        </widget>
       </item>
@@ -354,6 +354,13 @@
     <item>
      <layout class="QHBoxLayout" name="horizontalLayout_12">
       <item>
+       <widget class="QLabel" name="label_15">
+        <property name="text">
+         <string>Grain Size D50 (m)</string>
+        </property>
+       </widget>
+      </item>
+      <item>
        <spacer name="horizontalSpacer_15">
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
@@ -365,13 +372,6 @@
          </size>
         </property>
        </spacer>
-      </item>
-      <item>
-       <widget class="QLabel" name="label_15">
-        <property name="text">
-         <string>Sigma:</string>
-        </property>
-       </widget>
       </item>
       <item>
        <widget class="QDoubleSpinBox" name="spinDbl_sigma_3"/>
