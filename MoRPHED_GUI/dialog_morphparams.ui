@@ -76,7 +76,7 @@
      </layout>
     </item>
     <item>
-     <widget class="QRadioButton" name="rbtn_exp_2">
+     <widget class="QRadioButton" name="rbtn_exp2">
       <property name="text">
        <string>Exponential</string>
       </property>
@@ -136,7 +136,7 @@
      </layout>
     </item>
     <item>
-     <widget class="QRadioButton" name="rbtn_gaus_2">
+     <widget class="QRadioButton" name="rbtn_gaus2">
       <property name="text">
        <string>Gaussian</string>
       </property>
@@ -196,7 +196,7 @@
      </layout>
     </item>
     <item>
-     <widget class="QRadioButton" name="rbtn_custom_2">
+     <widget class="QRadioButton" name="rbtn_custom2">
       <property name="text">
        <string>Custom</string>
       </property>
@@ -460,7 +460,7 @@
      </layout>
     </item>
     <item>
-     <widget class="QRadioButton" name="rbtn_exp">
+     <widget class="QRadioButton" name="rbtn_exp1">
       <property name="text">
        <string>Exponential</string>
       </property>
@@ -520,7 +520,7 @@
      </layout>
     </item>
     <item>
-     <widget class="QRadioButton" name="rbtn_gaus">
+     <widget class="QRadioButton" name="rbtn_gaus1">
       <property name="text">
        <string>Gaussian</string>
       </property>
@@ -580,7 +580,7 @@
      </layout>
     </item>
     <item>
-     <widget class="QRadioButton" name="rbtn_custom">
+     <widget class="QRadioButton" name="rbtn_custom1">
       <property name="text">
        <string>Custom</string>
       </property>

@@ -164,6 +164,8 @@ void dialog_delftParams::setUsBound(int value)
 
 void dialog_delftParams::writeXml()
 {
+    closeOk = true;
+
     nUsBound = getUsBound();
     nDsBound = getDsBound();
 
