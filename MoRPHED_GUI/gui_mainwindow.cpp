@@ -30,7 +30,7 @@ void GUI_MainWindow::on_btn_inputs_clicked()
 
 void GUI_MainWindow::on_btn_morphParam_clicked()
 {
-    dialog_morphParams dialog(this);
+    dialog_morphParams dialog(XmlGui, this);
     dialog.setModal(true);
     dialog.exec();
 }
@@ -56,6 +56,18 @@ void GUI_MainWindow::on_btn_run_clicked()
     QFileInfo file(filenameXml);
 
     MORPH_FileManager fm(file.absolutePath());
+
+    //copy input files to project directory
+    QString path, dir;
+    dir = XmlGui.readNodeData("ProjectDirectory") + "/Inputs/01_InitialInputs";
+    path = XmlGui.readNodeData("Inputs", "DEMPath");
+    path = fm.copyFileToDirectory(path, dir, "InitialDEM");
+    XmlGui.writeNodeData("Inputs", "DEMPath", path);
+    path = XmlGui.readNodeData("Inputs", "HydroSediPath");
+    path = fm.copyFileToDirectory(path, dir, "InputHydroSedi");
+    XmlGui.writeNodeData("Inputs", "HydroSediPath", path);
+    XmlGui.printXML();
+
     MORPH_Delft3DIO *delft = new MORPH_Delft3DIO(filenameXml);
     MORPH_SedimentTransport *trans = new MORPH_SedimentTransport(filenameXml);
 
@@ -136,6 +148,7 @@ void GUI_MainWindow::on_actionNew_Project_triggered()
         baseDir = filename;
         filenameXml = filename + "/" + name + ".morph";
         XmlGui.setDocumentFilename(filenameXml);
+        XmlGui.printXML();
     }
 }
 

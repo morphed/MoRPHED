@@ -2,7 +2,7 @@
 
 MORPH_SedimentTransport::MORPH_SedimentTransport(QString xmlPath) : MORPH_Base(xmlPath)
 {
-    pathLength1.setupDistribution(plDistLength, sigA, muB, nPlDistType, cellWidth);
+    pathLength1.setupDistribution(plDistLength1, sigA1, muB1, nPlDistType1, cellWidth);
     exported = 0.0;
     unaccounted = 0.0;
     counterDepoTotal = 0.0;
@@ -14,7 +14,6 @@ MORPH_SedimentTransport::MORPH_SedimentTransport(QString xmlPath) : MORPH_Base(x
     QString path = qsTempPath + "/slope_init.tif";
     Raster.slopeTOF(qsOldDemPath.toStdString().c_str(), path.toStdString().c_str());
     maxSlope = Raster.findMax(path.toStdString().c_str());
-    maxSlope = 35.0;
     qDebug()<<"max slope "<<maxSlope;
 }
 
@@ -507,6 +506,7 @@ void MORPH_SedimentTransport::eliminateRegionsArea(int nRegions)
 {
     GDALDataset *pRegions;
     pRegions = (GDALDataset*) GDALOpen(qsRegionsPath.toStdString().c_str(), GA_Update);
+    int minCells = round(areaThresh/cellWidth);
 
     float *regVal = (float*) CPLMalloc(sizeof(float)*1);
 
@@ -526,7 +526,7 @@ void MORPH_SedimentTransport::eliminateRegionsArea(int nRegions)
             }
         }
 
-        if (regCount < 30)
+        if (regCount < minCells)
         {
             for (int j=0; j<nRows; j++)
             {
@@ -931,7 +931,7 @@ void MORPH_SedimentTransport::findDepositionCells(int row, int col, double amt)
 
 void MORPH_SedimentTransport::importSediment()
 {
-    pathLength1.setupDistribution(plDistLength, plDistLength, (plDistLength/2.0), 2, cellWidth);
+    pathLength1.setupDistribution(plDistLength2, sigA2, muB2, nPlDistType2, cellWidth);
     qDebug()<<"pl reset for import"<<pathLength1.getLength()<< pathLength1.getSigA()<< pathLength1.getMuB();
 
     findImportCells();
@@ -1177,7 +1177,7 @@ void MORPH_SedimentTransport::runBankErode()
 
 void MORPH_SedimentTransport::runBedErode()
 {
-    pathLength1.setupDistribution(plDistLength, sigA, muB, nPlDistType, cellWidth);
+    pathLength1.setupDistribution(plDistLength1, sigA1, muB1, nPlDistType1, cellWidth);
     qDebug()<<"pl reset "<<pathLength1.getLength()<< pathLength1.getSigA()<< pathLength1.getMuB();
 
     //create object for raster operations
@@ -1621,7 +1621,7 @@ double MORPH_SedimentTransport::erodeBedFlow(double shearCrit, double shear, int
     ustar = sqrt(shear / RHO);
     ustarc = sqrt(shearCrit / RHO);
     bedvel = A * (ustar-ustarc);
-    sediment = 0.5 * (bedload / (bedvel * RHO_S * (1.0 - POROSITY)));
+    sediment = erosionFactor * (bedload / (bedvel * RHO_S * (1.0 - POROSITY)));
 
     //setup location variables
     xCoord = transform[0] + (col * cellWidth);

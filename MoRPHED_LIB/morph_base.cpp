@@ -65,39 +65,39 @@ void MORPH_Base::init()
     topLeftX = transform[0];
     topLeftY = transform[3];
 
-    nIterations = XmlInit.readNodeData("Inputs", "ModelIterations").toInt();
+    //nIterations = XmlInit.readNodeData("Inputs", "ModelIterations").toInt();
     nDirUSbound = XmlInit.readNodeData("Delft3DParameters", "USBoundLocation").toInt();
     nDirDSbound = XmlInit.readNodeData("Delft3DParameters", "DSBoundLocation").toInt();
     nImportType = XmlInit.readNodeData("Inputs", "ImportType").toInt();
     nCurrentIteration = 0;
 
-    nGsType = XmlInit.readNodeData("Inputs", "GrainSize", "Type").toInt();
-    nGsActType = XmlInit.readNodeData("Inputs", "GrainSize", "ActiveType").toInt();
-    nGsSubType = XmlInit.readNodeData("Inputs", "GrainSize", "SubSurfType").toInt();
-    nPlDistType = XmlInit.readNodeData("MorphedParameters", "DistributionType").toInt();
+    nPlDistType1 = XmlInit.readNodeData("MorphedParameters", "PathLength1","DistributionType").toInt();
+    nPlDistType2 = XmlInit.readNodeData("MorphedParameters", "PathLengthImport","DistributionType").toInt();
     nDirDSbound = XmlInit.readNodeData("Delft3DParameters", "DSBoundLocation").toInt();
     nDirUSbound = XmlInit.readNodeData("Delft3DParameters", "USBoundLocation").toInt();
 
 
-    sigA = XmlInit.readNodeData("MorphedParameters", "SigA").toDouble();
-    muB = XmlInit.readNodeData("MorphedParameters", "MuB").toDouble();
+    sigA1 = XmlInit.readNodeData("MorphedParameters", "PathLength1","SigA").toDouble();
+    muB1 = XmlInit.readNodeData("MorphedParameters", "PathLength1","MuB").toDouble();
+    plDistLength1 = XmlInit.readNodeData("MorphedParameters", "PathLength1", "DistributionLength").toDouble();
+    sigA1 = XmlInit.readNodeData("MorphedParameters", "PathLengthImport","SigA").toDouble();
+    muB1 = XmlInit.readNodeData("MorphedParameters", "PathLengthImport","MuB").toDouble();
+    plDistLength1 = XmlInit.readNodeData("MorphedParameters", "PathLengthImport", "DistributionLength").toDouble();
     bankSlopeThresh = XmlInit.readNodeData("MorphedParameters", "BankSlopeThresh").toDouble();
     bankShearThresh = XmlInit.readNodeData("MorphedParameters", "BankShearThresh").toDouble();
+    areaThresh = XmlInit.readNodeData("MorphedParameters", "BankAreaThresh").toDouble();
+    erosionFactor = XmlInit.readNodeData("MorphedParameters", "ErosionFactor").toDouble();
+    gsActiveSize = XmlInit.readNodeData("MorphedParameters", "GrainSize").toDouble();
+
     simTime = XmlInit.readNodeData("Delft3DParameters", "SimTime").toDouble();
     timeStep = XmlInit.readNodeData("Delft3DParameters", "TimeStep").toDouble();
     roughness = XmlInit.readNodeData("Delft3DParameters", "Roughness").toDouble();
     hev = XmlInit.readNodeData("Delft3DParameters", "HEV").toDouble();
-    layerThickness = XmlInit.readNodeData("Inputs", "GrainSize", "LayerThickness").toDouble();
-    plDistLength = XmlInit.readNodeData("MorphedParameters", "DistributionLength").toDouble();
-    gsActiveSize = XmlInit.readNodeData("Inputs", "GrainSize", "ActiveSize").toDouble();
-
 
     qsInputPath = qsRootPath + "/Inputs";
     qsOutputPath = qsRootPath + "/Outputs";
 
 
-    qsGsActPath = XmlInit.readNodeData("Inputs", "GrainSize", "ActiveRasterPath");
-    qsGsSubPath = XmlInit.readNodeData("Inputs", "GrainSize", "SubSurfRasterPath");
     qsFloodName = MORPH_FileManager::getFloodName(nCurrentIteration);
 }
 

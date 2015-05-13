@@ -2,6 +2,7 @@
 #define DIALOG_MORPHPARAMS_H
 
 #include <QDialog>
+#include "xmlreadwrite.h"
 
 namespace Ui {
 class dialog_morphParams;
@@ -12,7 +13,7 @@ class dialog_morphParams : public QDialog
     Q_OBJECT
 
 public:
-    explicit dialog_morphParams(QWidget *parent = 0);
+    explicit dialog_morphParams(XMLReadWrite &XmlObj, QWidget *parent = 0);
     ~dialog_morphParams();
 
 private slots:
@@ -23,6 +24,7 @@ private slots:
 private:
     Ui::dialog_morphParams *ui;
 
+    XMLReadWrite XmlDoc;
     bool closeOk;
     double length1, length2, sigA1, sigA2, muB1, muB2, slpThresh, shrThresh, areaThresh, erosionFactor, grainSize;
     int nType1, nType2;
