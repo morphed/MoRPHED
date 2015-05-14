@@ -272,65 +272,6 @@ void MORPH_SedimentTransport::connectBankErosion()
      CPLFree(erdWin);
 }
 
-void MORPH_SedimentTransport::copyOutputs()
-{
-    //GDALAllRegister();
-    qDebug()<<"starting print";
-    openShearRaster();
-    openDepthRaster();
-    openDepositionRaster();
-    openNewDem();
-    qDebug()<<"datasets open";
-
-    QString qsRasterLocation, qsCopyPath;
-
-    qsRasterLocation = qsOutputPath + "/" + qsFloodName + "/GTIFF";
-
-    GDALDataset *pTemp, *pTemp2;
-
-    //pDriverTIFF = GetGDALDriverManager()->GetDriverByName("GTiff");
-    qDebug()<<"driver ready";
-    qsCopyPath = qsRasterLocation + "/BedShearStress" + QString::number(nCurrentIteration+1) + ".tif";
-    qDebug()<<qsCopyPath<< qsCopyPath.toStdString().c_str();
-    //pTemp = pDriverTIFF->CreateCopy(qsCopyPath.toStdString().c_str(), pShearRaster, FALSE, NULL, NULL, NULL);
-    qDebug()<<"shear printed";
-
-    qsCopyPath = qsRasterLocation + "/WaterDepth" + QString::number(nCurrentIteration+1) + ".tif";
-    pTemp = pDriverTIFF->CreateCopy(qsCopyPath.toStdString().c_str(), pDepthRaster, FALSE, NULL, NULL, NULL);
-    qDebug()<<"depth printed";
-
-    qsCopyPath = qsRasterLocation + "/DEM_out" + QString::number(nCurrentIteration+1) + ".tif";
-    pTemp = pDriverTIFF->CreateCopy(qsCopyPath.toStdString().c_str(), pNewDem, FALSE, NULL, NULL, NULL);
-    qDebug()<<"dem printed";
-
-
-
-    qsCopyPath = qsRasterLocation + "/BedDeposition" + QString::number(nCurrentIteration+1) + ".tif";
-    pTemp = pDriverTIFF->CreateCopy(qsCopyPath.toStdString().c_str(), pDepositRaster, FALSE, NULL, NULL, NULL);
-    qDebug()<<"deposition printed";
-
-    pTemp2 = (GDALDataset*) GDALOpen(qsErodeFilterPath.toStdString().c_str(), GA_ReadOnly);
-    qsCopyPath = qsRasterLocation + "/BedErosion" + QString::number(nCurrentIteration+1) + ".tif";
-    pTemp = pDriverTIFF->CreateCopy(qsCopyPath.toStdString().c_str(), pTemp2, FALSE, NULL, NULL, NULL);
-    qDebug()<<"erosion printed";
-
-    GDALClose(pShearRaster);
-    GDALClose(pDepthRaster);
-    GDALClose(pDepositRaster);
-
-    MORPH_Raster Raster;
-
-    qsCopyPath = qsRasterLocation + "/DoD_Cumulative" + QString::number(nCurrentIteration+1) + ".tif";
-    Raster.demOfDifference(qsOldDemPath.toStdString().c_str(), qsNewDemPath.toStdString().c_str(), qsCopyPath.toStdString().c_str());
-
-    pTemp = pDriverTIFF->CreateCopy(qsOldDemPath.toStdString().c_str(), pNewDem, FALSE, NULL, NULL, NULL);
-    qDebug()<<"dod printed";
-
-    GDALClose(pNewDem);
-    GDALClose(pTemp);
-    GDALClose(pTemp2);
-}
-
 void MORPH_SedimentTransport::depositTo3x3(int row, int col, double amt)
 {
     QVector<double> qvMatrix(2);
@@ -939,6 +880,11 @@ void MORPH_SedimentTransport::importSediment()
     qDebug()<<"copying to import depo raster";
 
     QString path1 = qsOutputPath + "/" + qsFloodName + "/GTIFF/ImportDepo" + QString::number(nCurrentIteration+1) + ".tif";
+    QFile file(path1);
+    if (file.exists())
+    {
+        file.remove();
+    }
     QFile::copy(qsDepoPath, path1);
 
     MORPH_Raster Raster;
@@ -964,6 +910,11 @@ void MORPH_SedimentTransport::importSediment()
     QString path = qsOutputPath + "/" + qsFloodName + "/GTIFF/DEM_" + QString::number(nCurrentIteration+1) + ".tif";
 
     qDebug()<<"copying new dem";
+    file.setFileName(path);
+    if (file.exists())
+    {
+        file.remove();
+    }
     QFile::copy(qsNewDemPath, path);
     qDebug()<<"deleting old dem "<<qsOldDemPath;
     //GDALDeleteDataset(pDriverTIFF, qsOldDemPath.toStdString().c_str());
@@ -997,8 +948,18 @@ void MORPH_SedimentTransport::loadRasters()
     Raster.fromXYZ(qsDepthPath.toStdString().c_str(), qsDepth.toStdString().c_str(), nCols, nRows, noData, transform, 1);
 
     QString path = qsOutputPath + "/" + qsFloodName + "/GTIFF/Shear" + QString::number(nCurrentIteration+1) + ".tif";
+    QFile file(path);
+    if (file.exists())
+    {
+        file.remove();
+    }
     QFile::copy(qsShearPath, path);
     path = qsOutputPath + "/" + qsFloodName + "/GTIFF/Depth" + QString::number(nCurrentIteration+1) + ".tif";
+    file.setFileName(path);
+    if (file.exists())
+    {
+        file.remove();
+    }
     QFile::copy(qsDepthPath, path);
 
     qDebug()<<"starting flow direction";
@@ -1006,6 +967,11 @@ void MORPH_SedimentTransport::loadRasters()
     qDebug()<<"flow direction done";
 
     path = qsOutputPath + "/" + qsFloodName + "/GTIFF/FlowDir" + QString::number(nCurrentIteration+1) + ".tif";
+    file.setFileName(path);
+    if (file.exists())
+    {
+        file.remove();
+    }
     QFile::copy(qsFdirPath, path);
 
     GDALDataset *pErode, *pDepo;

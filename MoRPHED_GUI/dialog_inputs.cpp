@@ -107,8 +107,8 @@ void dialog_inputs::writeXml()
         QMessageBox::information(this, "Invalid Input path", "Please enter a valid Input path");
     }
 
-    XmlDoc.writeNodeData("Inputs", "DEMPath", qsDem);
-    XmlDoc.writeNodeData("Inputs", "HydroSediPath", qsHydroSedi);
+    XmlDoc.writeNodeData("OriginalDEMPath", qsDem);
+    XmlDoc.writeNodeData("OriginalHydroSediPath", qsHydroSedi);
     XmlDoc.writeNodeData("Inputs", "ImportType", QString::number(nImportType));
 
     XmlDoc.printXML();

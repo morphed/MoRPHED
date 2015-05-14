@@ -80,9 +80,9 @@ void MORPH_Base::init()
     sigA1 = XmlInit.readNodeData("MorphedParameters", "PathLength1","SigA").toDouble();
     muB1 = XmlInit.readNodeData("MorphedParameters", "PathLength1","MuB").toDouble();
     plDistLength1 = XmlInit.readNodeData("MorphedParameters", "PathLength1", "DistributionLength").toDouble();
-    sigA1 = XmlInit.readNodeData("MorphedParameters", "PathLengthImport","SigA").toDouble();
-    muB1 = XmlInit.readNodeData("MorphedParameters", "PathLengthImport","MuB").toDouble();
-    plDistLength1 = XmlInit.readNodeData("MorphedParameters", "PathLengthImport", "DistributionLength").toDouble();
+    sigA2 = XmlInit.readNodeData("MorphedParameters", "PathLengthImport","SigA").toDouble();
+    muB2 = XmlInit.readNodeData("MorphedParameters", "PathLengthImport","MuB").toDouble();
+    plDistLength2 = XmlInit.readNodeData("MorphedParameters", "PathLengthImport", "DistributionLength").toDouble();
     bankSlopeThresh = XmlInit.readNodeData("MorphedParameters", "BankSlopeThresh").toDouble();
     bankShearThresh = XmlInit.readNodeData("MorphedParameters", "BankShearThresh").toDouble();
     areaThresh = XmlInit.readNodeData("MorphedParameters", "BankAreaThresh").toDouble();
@@ -99,6 +99,8 @@ void MORPH_Base::init()
 
 
     qsFloodName = MORPH_FileManager::getFloodName(nCurrentIteration);
+    qDebug()<<"pl 1: type "<<nPlDistType1<<" length "<<plDistLength1<<" siga "<<sigA1<<" mub "<<muB1;
+    qDebug()<<"pl 2: type "<<nPlDistType2<<" length "<<plDistLength2<<" siga "<<sigA2<<" mub "<<muB2;
 }
 
 void MORPH_Base::loadDrivers()

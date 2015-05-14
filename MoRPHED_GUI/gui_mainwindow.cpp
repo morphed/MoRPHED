@@ -60,12 +60,16 @@ void GUI_MainWindow::on_btn_run_clicked()
     //copy input files to project directory
     QString path, dir;
     dir = XmlGui.readNodeData("ProjectDirectory") + "/Inputs/01_InitialInputs";
-    path = XmlGui.readNodeData("Inputs", "DEMPath");
+    path = XmlGui.readNodeData("OriginalDEMPath");
+
     path = fm.copyFileToDirectory(path, dir, "InitialDEM");
     XmlGui.writeNodeData("Inputs", "DEMPath", path);
-    path = XmlGui.readNodeData("Inputs", "HydroSediPath");
+
+    path = XmlGui.readNodeData("OriginalHydroSediPath");
+
     path = fm.copyFileToDirectory(path, dir, "InputHydroSedi");
     XmlGui.writeNodeData("Inputs", "HydroSediPath", path);
+
     XmlGui.printXML();
 
     MORPH_Delft3DIO *delft = new MORPH_Delft3DIO(filenameXml);

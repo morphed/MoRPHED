@@ -310,6 +310,7 @@ void MORPH_Delft3DIO::extendDEMBoundary()
     }
 
     GDALClose(pSourceDEM);
+    GDALClose(pExtendedDEM);
 
     CPLFree(oldValue);
     CPLFree(newValue);

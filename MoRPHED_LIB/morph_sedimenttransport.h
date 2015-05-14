@@ -14,7 +14,6 @@ public:
     void calcBankShear();
     void calcLateralRetreat();
     void connectBankErosion();
-    void copyOutputs();
     void depositTo3x3(int row, int col, double amt);
     void depositTo5x5(int row, int col, double amt);
     void depositToDEM();
