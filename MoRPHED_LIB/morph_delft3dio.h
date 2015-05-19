@@ -22,8 +22,6 @@ public:
     QVector<int> getDisColVector();
     QVector<int> getDisRowVector();
     void run();
-    void runFlow();
-    void runQuickplot();
     void setDischargePoints();
     void setDownstreamBoundary();
     void setObservationPoints();

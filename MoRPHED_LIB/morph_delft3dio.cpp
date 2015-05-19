@@ -98,7 +98,10 @@ void MORPH_Delft3DIO::calculateDSWSE()
         }
         count++;
     }
+
     GDALClose(pSourceDEM);
+
+    CPLFree(row);
 }
 
 void MORPH_Delft3DIO::closeDelftDatasets()
@@ -402,7 +405,7 @@ void MORPH_Delft3DIO::run()
         {
             count = 0;
 
-            while ((!exist1 || !exist2 || !exist3 || !exist4) && count < 10)
+            while ((!exist1 || !exist2 || !exist3 || !exist4) && count < 50)
             {
                 qDebug()<<"starting qp "<<count;
                 processQp.start(qpName, qpParams);
@@ -439,7 +442,7 @@ void MORPH_Delft3DIO::run()
                 }
                 count++;
                 exist1 = xvt.exists(), exist2 = yvt.exists(), exist3 = sst.exists(), exist4 = wdt.exists();
-                if ((!exist1 || !exist2 || !exist3 || !exist4) && count == 9)
+                if ((!exist1 || !exist2 || !exist3 || !exist4) && count == 49)
                 {
                     qDebug()<<"Hydraulics files do not exist after 10 attempts\n";
                 }
@@ -460,26 +463,6 @@ void MORPH_Delft3DIO::run()
     {
         qDebug()<<"Delft3D data file does not exist";
     }
-}
-
-void MORPH_Delft3DIO::runFlow()
-{
-    QString flowCall = qsDelftPath + "/w32/flow/bin/deltares_hydro.exe " + qsFloodName + ".ini";
-    //QString delftDir = qsInputPath + "/Delft3D";
-    QProcess flowRun;
-    chdir(qsDelftPath.toStdString().c_str());
-    flowRun.execute(flowCall);
-    flowRun.waitForFinished(-1);
-}
-
-void MORPH_Delft3DIO::runQuickplot()
-{
-    QString qpCall = qsDelftPath + "/w32/quickplot/bin/d3d_qp.exe run " + qsFloodName + ".m";
-    QString delftDir = qsInputPath + "/Delft3D";
-    QProcess qpRun;
-    chdir(delftDir.toStdString().c_str());
-    qpRun.execute(qpCall);
-    qpRun.waitForFinished(-1);
 }
 
 void MORPH_Delft3DIO::setDischargePoints()
@@ -1038,7 +1021,7 @@ void MORPH_Delft3DIO::writeDEP()
     {
         out<<DELFT_NODATA<<"\t";
         count++;
-        if (count ==12)
+        if (count == 12)
         {
             out<<"\n";
             count = 0;
@@ -1050,6 +1033,7 @@ void MORPH_Delft3DIO::writeDEP()
     fout.close();
 
     GDALClose(pExtendedDEM);
+
     CPLFree(value);
     value = NULL;
 }
@@ -1437,9 +1421,10 @@ void MORPH_Delft3DIO::writeXYZ()
         }
     }
     fout.close();
+
     GDALClose(pExtendedDEM);
+
     CPLFree(read);
-    read = NULL;
 }
 
 int MORPH_Delft3DIO::xCellAddress(double coord)
