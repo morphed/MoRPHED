@@ -30,6 +30,12 @@ void MORPH_Delft3DIO::calculateDSWSE()
     float *row = (float*) CPLMalloc(sizeof(float)*nCols);
 
     depth = Raster.findMax(qsDelftDemPath.toStdString().c_str()) + dswe[nCurrentIteration];
+    if (depth != newDemMax)
+    {
+        qDebug()<<"DEM MAX ERROR in xyz: class "<<newDemMax<<" func "<<depth;
+    }
+
+    depth = newDemMax;
 
     openSourceDEM();
 
@@ -83,7 +89,7 @@ void MORPH_Delft3DIO::calculateDSWSE()
         else
         {
             stop = true;
-            depth = depth - Raster.findMax(qsDelftDemPath.toStdString().c_str());
+            depth = depth - newDemMax;
             qDebug()<<"NEW DSWSE: "<<depth<<" "<<dswe[nCurrentIteration];
             dswe[nCurrentIteration] = depth;
         }
@@ -342,7 +348,12 @@ void MORPH_Delft3DIO::run()
     bool exist1, exist2, exist3, exist4, existData;
     int count;
 
+    MORPH_Raster Raster;
+
     extendDEMBoundary();
+
+    newDemMax = Raster.findMax(qsExtendedDemPath.toStdString().c_str());
+
     calculateDSWSE();
 
     GDALAllRegister();
@@ -477,7 +488,7 @@ void MORPH_Delft3DIO::setDischargePoints()
 
     float *row;
 
-    depth = Raster.findMax(qsDelftDemPath.toStdString().c_str()) + dswe[nCurrentIteration];
+    depth = newDemMax + dswe[nCurrentIteration];
 
     openSourceDEM();
 
@@ -957,12 +968,18 @@ void MORPH_Delft3DIO::writeDEP()
     QTextStream out(&fout);
     int count = 0;
     double max = Raster.findMax(qsExtendedDemPath.toStdString().c_str());
+    if (max != newDemMax)
+    {
+        qDebug()<<"DEM MAX ERROR in dep: class "<<newDemMax<<" func "<<max;
+    }
+
     float *value = (float*) CPLMalloc(sizeof(float)*1);
 
     out.setRealNumberNotation(QTextStream::ScientificNotation);
     out.setRealNumberPrecision(7);
 
     openExtendedDEM();
+
     //add row of no data values to top of file
     out<<DELFT_NODATA<<"\t";
     count++;
@@ -1000,7 +1017,7 @@ void MORPH_Delft3DIO::writeDEP()
             }
             else
             {
-                *value = (*value-max) * (-1.0);
+                *value = (*value - newDemMax) * (-1.0);
                 out<<*value<<"\t";
             }
             count++;
@@ -1393,6 +1410,10 @@ void MORPH_Delft3DIO::writeXYZ()
     double xtlCenter, ytlCenter, xCenter, yCenter;
 
     dMax = Raster.findMax(qsExtendedDemPath.toStdString().c_str());
+    if (dMax != newDemMax)
+    {
+        qDebug()<<"DEM MAX ERROR in xyz: class "<<newDemMax<<" func "<<dMax;
+    }
 
     xtlCenter = topLeftX + (cellWidth/2);
     ytlCenter = topLeftY + (cellHeight/2);
@@ -1403,6 +1424,7 @@ void MORPH_Delft3DIO::writeXYZ()
     fout.open(QIODevice::WriteOnly | QIODevice::Text);
     QTextStream out(&fout);
     out.setRealNumberNotation(QTextStream::FixedNotation);
+
     openExtendedDEM();
 
     for (int i=0; i<nRowsExt; i++)
@@ -1413,7 +1435,7 @@ void MORPH_Delft3DIO::writeXYZ()
             pExtendedDEM->GetRasterBand(1)->RasterIO(GF_Read,j,i,1,1,read,1,1,GDT_Float32,0,0);
             if (*read != noData)
             {
-                dInvertValue = (*read - dMax) * (-1);
+                dInvertValue = (*read - newDemMax) * (-1.0);
                 xCenter = xtlCenter + (j*cellWidth);
                 out.setRealNumberPrecision(5);
                 out << xCenter << "\t" <<yCenter << "\t" << dInvertValue <<"\n";

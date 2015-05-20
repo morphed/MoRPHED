@@ -78,6 +78,7 @@ private:
             xOrigin,
             yOrigin,
             origDemMax,
+            newDemMax,
             dSlope;
 
     QString qsDelftPath,
