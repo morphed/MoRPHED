@@ -860,10 +860,11 @@ void MORPH_Raster::slopeTOF(const char *slopePath)
         pSlopeDS->GetRasterBand(1)->RasterIO(GF_Write,0,i,nCols,1,sVals,nCols,1,GDT_Float32,0,0);
     }
 
-    CPLFree(eVals);
-    CPLFree(sVals);
     GDALClose(pSourceDS);
     GDALClose(pSlopeDS);
+
+    CPLFree(eVals);
+    CPLFree(sVals);
 }
 
 void MORPH_Raster::slopeTOF(const char *sourcePath, const char *slopePath)
@@ -1044,6 +1045,8 @@ void MORPH_Raster::zeroToNoData(const char *sourcePath, double noDataValue)
 
         pSourceRaster->GetRasterBand(1)->RasterIO(GF_Write, 0, i, nCols, 1, newRow, nCols, 1, GDT_Float32, 0, 0);
     }
+
+    GDALClose(pSourceRaster);
 
     CPLFree(oldRow);
     CPLFree(newRow);

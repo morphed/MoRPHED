@@ -2684,6 +2684,12 @@ void MORPH_SedimentTransport::fixDeposition(QString dodPath)
 
     GDALClose(pDepthRaster);
     GDALClose(pDemOfDiff);
+
+    CPLFree(dodRow);
+    CPLFree(depRow);
+    CPLFree(dodWin);
+    CPLFree(depWin);
+    CPLFree(newDodWin);
 }
 
 void MORPH_SedimentTransport::openDepositionRaster()
@@ -2999,14 +3005,13 @@ void MORPH_SedimentTransport::runDeposition(const char *erosionRasterPath)
         //qDebug()<<"depo row done "<<i;
     }
 
-    qDebug()<<"freeing memory";
-    CPLFree(erdRow);
-    CPLFree(dirWin);
-
-
     qDebug()<<"closing datasets";
     GDALClose(pRaster);
     GDALClose(pFdirRaster);
     GDALClose(pDepthRaster);
+
+    qDebug()<<"freeing memory";
+    CPLFree(erdRow);
+    CPLFree(dirWin);
     qDebug()<<"done depositing";
 }
