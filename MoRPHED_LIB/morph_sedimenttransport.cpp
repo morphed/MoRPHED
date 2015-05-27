@@ -178,6 +178,10 @@ void MORPH_SedimentTransport::calcLateralRetreat()
             }
             else
             {
+//                if (slpRow[j] > maxSlope)
+//                {
+//                    slpRow[j] = maxSlope;
+//                }
                 newRow[j] = (round((shrRow[j]/3.0 + 1) * (slpRow[j]/15.0)));
             }
         }
@@ -762,10 +766,12 @@ void MORPH_SedimentTransport::importSediment()
     qDebug()<<"starting add";
     Raster.add(qsNewDemPath.toStdString().c_str(), path1.toStdString().c_str());
 
-    sloughBanks();
-    qDebug()<<"slough done, print undeposited";
+    //sloughBanks();
+    //qDebug()<<"slough done, print undeposited";
 
     qDebug()<<"undeposited "<<unaccounted;
+    Raster.copyBoundary(qsNewDemPath.toStdString().c_str(), nDirDSbound);
+    Raster.copyBoundary(qsNewDemPath.toStdString().c_str(), nDirUSbound);
 
     //GDALDataset *pTemp, *pTemp2;
 
@@ -1159,7 +1165,7 @@ void MORPH_SedimentTransport::setImportCells(QVector<int> rows, QVector<int> col
 
 void MORPH_SedimentTransport::sloughBanks()
 {
-    loadDrivers();
+    //loadDrivers();
     qDebug()<<"starting slough";
     bool stop = false;
     int iterCount = 0, changedCount, lowCount, highCount;
@@ -1354,9 +1360,8 @@ double MORPH_SedimentTransport::averageShear_FlowLine(int row, int col, int cell
     //find values for upstream cells
     for (int i=1; i<cellsUS+1; i++)
     {
-        //find next downstream cell
+
         qvResult = findNextCell_Backward(qvResult[2], qvResult[3], qvResult[0], qvResult[1]);
-        //qDebug()<<"ave shr bkwd done";
 
         //make sure new cell is in a valid location
         if (qvResult[0] < nRows-2 && qvResult[0] > 1 && qvResult[1] < nCols-2 && qvResult[1] > 1)
@@ -1370,6 +1375,11 @@ double MORPH_SedimentTransport::averageShear_FlowLine(int row, int col, int cell
                 total += fabs(*sVal);
                 count++;
             }
+        }
+        else
+        {
+            //qDebug()<<"break out of loop, backward cell out of range";
+            //break;
         }
     }
 
