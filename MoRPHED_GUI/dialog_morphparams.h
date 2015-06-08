@@ -3,6 +3,8 @@
 
 #include <QDialog>
 #include "xmlreadwrite.h"
+#include "morph_pathlengthdist.h"
+#include "morph_base.h"
 
 namespace Ui {
 class dialog_morphParams;
@@ -16,18 +18,25 @@ public:
     explicit dialog_morphParams(XMLReadWrite &XmlObj, QWidget *parent = 0);
     ~dialog_morphParams();
 
+    void setupPlots();
+    void setValues();
+    void updatePlots();
+
 private slots:
     void on_btn_cancel_clicked();
 
     void on_btn_ok_clicked();
 
+    void on_btn_update_clicked();
+
 private:
     Ui::dialog_morphParams *ui;
 
     XMLReadWrite XmlDoc;
-    bool closeOk;
+    bool closeOk, plotOk;
     double length1, length2, sigA1, sigA2, muB1, muB2, slpThresh, shrThresh, areaThresh, erosionFactor, grainSize;
-    int nType1, nType2;
+    int nType1, nType2, nCellWidth;
+    QVector<double> x1, x2, y1, y2;
 
     void checkClose();
     int getType1();

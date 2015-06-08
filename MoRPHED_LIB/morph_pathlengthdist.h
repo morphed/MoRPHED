@@ -3,7 +3,7 @@
 
 #include "morphed_lib.h"
 
-class MORPH_PathLengthDist
+class MORPHED_LIBSHARED_EXPORT MORPH_PathLengthDist
 {
 public:
     MORPH_PathLengthDist();
@@ -18,7 +18,7 @@ public:
     double getValueAtPosition(int nPos);
     void setupDistribution(double length, double sig_a, double mu_b, int type, double cellSize);
 
-    static QVector<double> getDistribution(int type, double sigA, double muB, int lengthCells);
+    static QVector<double> getDistribution(int nType, double sigA, double muB, int nLength);
 
 private:
     int nLength, nType;

@@ -142,6 +142,8 @@ void dialog_inputs::writeXml()
     XmlDoc.writeNodeData("OriginalHydroSediPath", qsHydroSedi);
     XmlDoc.writeNodeData("Inputs", "ImportType", QString::number(nImportType));
 
+    XmlDoc.writeRasterProperties(qsDem.toStdString().c_str());
+
     XmlDoc.printXML();
 }
 
@@ -157,7 +159,7 @@ void dialog_inputs::on_line_input_textEdited(const QString &arg1)
 
 void dialog_inputs::on_btn_graph_clicked()
 {
-
+    updatePlot();
 }
 
 void dialog_inputs::on_tbtn_dem_clicked()

@@ -54,6 +54,54 @@ void MORPH_PathLengthDist::setupDistribution(double length, double sig_a, double
     setupDistribution();
 }
 
+QVector<double> MORPH_PathLengthDist::getDistribution(int nType, double sigA, double muB, int nLength)
+{
+    QVector<double> qvDist;
+
+    bool good = true;
+    double factor;
+    double sum = 0.0;
+
+    //exponential
+    if (nType == 1)
+    {
+        for (int i=0; i<nLength; i++)
+        {
+            qvDist.append((1.0/sqrt(2.0*PI))*exp(((-1.0)*sigA)*muB*(i+1.0)));
+            sum += qvDist[i];
+        }
+    }
+    //gaussian
+    else if (nType == 2)
+    {
+        for (int i=0; i<nLength; i++)
+        {
+            qvDist.append((1.0/(sigA*sqrt(2.0*PI))) * exp((-0.5)*pow((((i+1.0)-muB)/sigA),2.0)));
+            sum += qvDist[i];
+        }
+    }
+    //custom
+    else if (nType == 3)
+    {
+
+    }
+    else
+    {
+        good = false;
+    }
+
+    if (good)
+    {
+        factor = 1.0/sum;
+        for (int i=0; i<nLength; i++)
+        {
+            qvDist[i] *= factor;
+        }
+    }
+
+    return qvDist;
+}
+
 void MORPH_PathLengthDist::setupDistribution()
 {
     qvDist.clear();
