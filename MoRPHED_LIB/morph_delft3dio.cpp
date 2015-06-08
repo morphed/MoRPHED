@@ -9,6 +9,11 @@ MORPH_Delft3DIO::MORPH_Delft3DIO(QString xmlPath) : MORPH_Base(xmlPath)
 
 MORPH_Delft3DIO::~MORPH_Delft3DIO()
 {
+    qDebug()<<"Delft destructor";
+    processDelft.kill();
+    QString command = "taskkill /pid " + QString::number(nPID);
+    qDebug()<<"exectuing command";
+    processDelft.execute(command);
 
 }
 
@@ -386,6 +391,8 @@ void MORPH_Delft3DIO::run()
     qDebug()<<"starting delft";
     QDir::setCurrent(qsInputPath + "/" + qsFloodName + "/Delft3D");
     processDelft.start(delftName, delftParams);
+    processDelft.waitForStarted(-1);
+    nPID = processDelft.processId();
     processDelft.waitForFinished(-1);
     qDebug()<<"delft done";
     QString qpQuit = "TASKKILL /F /IM d3d_qp.exec";

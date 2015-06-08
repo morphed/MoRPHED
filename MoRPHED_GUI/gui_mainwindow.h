@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include <QFileDialog>
 #include <QMessageBox>
+#include <QtGui>
 #include "dialog_inputs.h"
 #include "dialog_morphparams.h"
 #include "dialog_delftparams.h"
@@ -21,6 +22,8 @@ class GUI_MainWindow : public QMainWindow
 public:
     explicit GUI_MainWindow(QWidget *parent = 0);
     ~GUI_MainWindow();
+
+    void closeEvent(QCloseEvent *event);
 
 private slots:
     void on_btn_description_clicked();

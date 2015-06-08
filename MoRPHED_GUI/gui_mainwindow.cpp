@@ -16,6 +16,12 @@ GUI_MainWindow::~GUI_MainWindow()
     delete ui;
 }
 
+void GUI_MainWindow::closeEvent(QCloseEvent *event)
+{
+    qDebug()<<"closing";
+    event->accept();
+}
+
 void GUI_MainWindow::on_btn_description_clicked()
 {
 
@@ -74,6 +80,8 @@ void GUI_MainWindow::on_btn_run_clicked()
 
     MORPH_Delft3DIO *delft = new MORPH_Delft3DIO(filenameXml);
     MORPH_SedimentTransport *trans = new MORPH_SedimentTransport(filenameXml);
+    //delft = new MORPH_Delft3DIO(filenameXml);
+    //trans = new MORPH_SedimentTransport(filenameXml);
 
     for (int i=0; i<trans->getIterations(); i++)
     {

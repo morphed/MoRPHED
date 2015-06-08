@@ -28,6 +28,65 @@ void MORPH_Base::setCurrentIteration(int iter)
     qsFloodName = MORPH_FileManager::getFloodName(iter+1);
 }
 
+double MORPH_Base::findMaxVector(QVector<double> vector)
+{
+    double max =0;
+
+    for (int i=0; i<vector.size(); i++)
+    {
+        if (i == 0)
+        {
+            max = vector[i];
+        }
+
+        else
+        {
+            if (max < vector[i])
+            {
+                max = vector[i];
+            }
+        }
+    }
+    return max;
+}
+
+void MORPH_Base::loadInputText(QString filename, QVector<double> &dates, QVector<double> &discharge, QVector<double> &waterElev, QVector<double> &sediment)
+{
+    dates.clear();
+    discharge.clear();
+    waterElev.clear();
+    sediment.clear();
+
+    //declare temp variables to hold stream data
+    QString qsDate, qsQ, qsDSWE, qsImport;
+    QDateTime tempDate;
+    int count = 0;
+
+    //load file
+    QFile in(filename);
+    if (in.open(QIODevice::ReadOnly | QIODevice::Text))
+    {
+        QTextStream stream(&in);
+        while (!stream.atEnd())
+        {
+            //read elements from stream to temp variable, convert to double, and store in a QVector
+            stream >> qsDate;
+            tempDate = QDateTime::fromString(qsDate, "MM/dd/yyyy,hh:mm");
+            dates.append(tempDate.toTime_t());
+            stream >> qsQ;
+            discharge.append(qsQ.toDouble());
+            stream >> qsDSWE;
+            waterElev.append(qsDSWE.toDouble());
+            stream >> qsImport;
+            sediment.append(qsImport.toDouble());
+
+            //Each line represents 1 model iteration, increment model iterations after each line is read
+            //qDebug()<<date[nIterations]<<" "<<q[nIterations]<<" "<<dswe[nIterations]<<" "<<import[nIterations];
+            count++;
+        }
+    }
+}
+
 void MORPH_Base::init()
 {
     loadDrivers();
@@ -129,7 +188,7 @@ void MORPH_Base::loadInputText()
         {
             //read elements from stream to temp variable, convert to double, and store in a QVector
             stream >> qsDate;
-            tempDate = QDateTime::fromString("MM/dd/yyyy,hh:mm");
+            tempDate = QDateTime::fromString(qsDate, "MM/dd/yyyy,hh:mm");
             date.append(tempDate.toTime_t());
             stream >> qsQ;
             q.append(qsQ.toDouble());

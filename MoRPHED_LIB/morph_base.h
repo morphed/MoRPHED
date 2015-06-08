@@ -16,6 +16,9 @@ public:
     int getIterations();
     void setCurrentIteration(int iter);
 
+    static double findMaxVector(QVector<double> vector);
+    static void loadInputText(QString filename, QVector<double> &dates, QVector<double> &discharge, QVector<double> &waterElev, QVector<double> &sediment);
+
 protected:
     XMLReadWrite XmlInit;
 

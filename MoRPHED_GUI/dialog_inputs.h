@@ -3,6 +3,7 @@
 
 #include <QMessageBox>
 #include "xmlreadwrite.h"
+#include "morph_base.h"
 
 #include <QDialog>
 
@@ -17,6 +18,9 @@ class dialog_inputs : public QDialog
 public:
     explicit dialog_inputs(XMLReadWrite &XmlObj, QWidget *parent = 0);
     ~dialog_inputs();
+
+    void setupPlot();
+    void updatePlot();
 
 private slots:
     void on_btn_cancel_clicked();
@@ -40,6 +44,7 @@ private:
     QString qsDem, qsHydroSedi;
     int nImportType;
     bool closeOk;
+    QVector<double> q, sedi, date, dswe;
 
     void checkClose();
     void readXml();

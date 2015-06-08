@@ -62,7 +62,8 @@ private:
             yend,
             disCount,
             disMin,
-            disMax;
+            disMax,
+            nPID;
 
     double  extTransform[6],
             usx1,

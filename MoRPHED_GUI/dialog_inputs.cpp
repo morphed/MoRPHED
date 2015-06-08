@@ -11,11 +11,42 @@ dialog_inputs::dialog_inputs(XMLReadWrite &XmlObj, QWidget *parent) :
     closeOk = true;
 
     readXml();
+
+    setupPlot();
 }
 
 dialog_inputs::~dialog_inputs()
 {
     delete ui;
+}
+
+void dialog_inputs::setupPlot()
+{
+    ui->plot_hydro->addGraph();
+    ui->plot_hydro->graph(0)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssDisc, 5));
+    ui->plot_hydro->graph(0)->setLineStyle(QCPGraph::lsLine);
+    ui->plot_hydro->graph(0)->setPen(QPen(Qt::blue));
+
+    ui->plot_hydro->yAxis->setLabel("Discarge (cms)");
+    ui->plot_hydro->xAxis->setLabel("Date");
+}
+
+void dialog_inputs::updatePlot()
+{
+    double maxQ;
+
+    ui->plot_hydro->graph(0)->setData(date, q);
+    ui->plot_hydro->xAxis->setTickLabelType(QCPAxis::ltDateTime);
+    ui->plot_hydro->xAxis->setDateTimeFormat("MM/dd\nyyyy");
+    ui->plot_hydro->xAxis->setAutoTickStep(true);
+    ui->plot_hydro->xAxis->setRange(date.first()-24*3600, date.last()+24*3600);
+    ui->plot_hydro->yAxis->setAutoTickStep(true);
+
+    maxQ = MORPH_Base::findMaxVector(q);
+
+    ui->plot_hydro->yAxis->setRange(0, maxQ + (maxQ * 0.05));
+    ui->plot_hydro->replot();
+    ui->plot_hydro->update();
 }
 
 void dialog_inputs::on_btn_cancel_clicked()
@@ -148,7 +179,7 @@ void dialog_inputs::on_tbtn_dem_clicked()
 
 void dialog_inputs::on_tbtn_input_clicked()
 {
-    QString filename = QFileDialog::getOpenFileName(this, "Select DEM");
+    QString filename = QFileDialog::getOpenFileName(this, "Select Input file *.txt");
 
     if (!filename.isNull() || !filename.isEmpty())
     {
@@ -159,6 +190,8 @@ void dialog_inputs::on_tbtn_input_clicked()
             QFileInfo fi(file);
             qsHydroSedi = filename;
             ui->line_input->setText(qsHydroSedi);
+            MORPH_Base::loadInputText(filename, date, q, dswe, sedi);
+            updatePlot();
         }
     }
 }

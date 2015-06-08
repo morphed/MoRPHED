@@ -118,7 +118,7 @@
     </layout>
    </item>
    <item>
-    <widget class="QCustomPlot" name="widget" native="true">
+    <widget class="QCustomPlot" name="plot_hydro" native="true">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
        <horstretch>0</horstretch>
