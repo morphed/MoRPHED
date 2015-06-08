@@ -19,11 +19,25 @@ dialog_morphParams::~dialog_morphParams()
     delete ui;
 }
 
+void dialog_morphParams::setupDisplay()
+{
+    ui->rbtn_custom1->setEnabled(false);
+    ui->rbtn_custom2->setEnabled(false);
+    ui->spinDbl_a1->setEnabled(false);
+    ui->spinDbl_a2->setEnabled(false);
+    ui->spinDbl_b1->setEnabled(false);
+    ui->spinDbl_b2->setEnabled(false);
+    ui->spinDbl_mu1->setEnabled(false);
+    ui->spinDbl_mu2->setEnabled(false);
+    ui->spinDbl_sigma1->setEnabled(false);
+    ui->spinDbl_sigma2->setEnabled(false);
+}
+
 
 void dialog_morphParams::setupPlots()
 {
     ui->plot_pl1->addGraph();
-    ui->plot_pl1->xAxis->setLabel("Distance from Origin");
+    ui->plot_pl1->xAxis->setLabel("Distance from Sediment Origin (m)");
     ui->plot_pl1->yAxis->setLabel("Proportion of Sediment Deposited");
     ui->plot_pl1->yAxis->setRange(0, 1);
     ui->plot_pl1->xAxis->setRange(0, 10);
@@ -35,7 +49,7 @@ void dialog_morphParams::setupPlots()
     ui->plot_pl1->yAxis->setSubTickCount(1);
 
     ui->plot_pl2->addGraph();
-    ui->plot_pl2->xAxis->setLabel("Distance from Origin");
+    ui->plot_pl2->xAxis->setLabel("Distance from Sediment Origin (m)");
     ui->plot_pl2->yAxis->setLabel("Proportion of Sediment Deposited");
     ui->plot_pl2->yAxis->setRange(0, 1);
     ui->plot_pl2->xAxis->setRange(0, 10);
@@ -267,22 +281,26 @@ void dialog_morphParams::readXml()
 
     if (nType1 == 1)
     {
+        ui->rbtn_exp1->setChecked(true);
         ui->spinDbl_a1->setValue(sigA1);
         ui->spinDbl_b1->setValue(muB1);
     }
     else if (nType1 == 2)
     {
+        ui->rbtn_gaus1->setChecked(true);
         ui->spinDbl_mu1->setValue(muB1);
         ui->spinDbl_sigma1->setValue(sigA1);
     }
 
     if (nType2 == 1)
     {
+        ui->rbtn_exp2->setChecked(true);
         ui->spinDbl_a2->setValue(sigA2);
         ui->spinDbl_b2->setValue(muB2);
     }
     else if (nType2 == 2)
     {
+        ui->rbtn_gaus2->setChecked(true);
         ui->spinDbl_mu2->setValue(muB2);
         ui->spinDbl_sigma2->setValue(sigA2);
     }
@@ -310,4 +328,48 @@ void dialog_morphParams::writeXml()
 void dialog_morphParams::on_btn_update_clicked()
 {
     updatePlots();
+}
+
+void dialog_morphParams::on_rbtn_exp2_toggled(bool checked)
+{
+    if (checked)
+    {
+        ui->spinDbl_a2->setEnabled(true);
+        ui->spinDbl_b2->setEnabled(true);
+        ui->spinDbl_mu2->setEnabled(false);
+        ui->spinDbl_sigma2->setEnabled(false);
+    }
+}
+
+void dialog_morphParams::on_rbtn_exp1_toggled(bool checked)
+{
+    if (checked)
+    {
+        ui->spinDbl_a1->setEnabled(true);
+        ui->spinDbl_b1->setEnabled(true);
+        ui->spinDbl_mu1->setEnabled(false);
+        ui->spinDbl_sigma1->setEnabled(false);
+    }
+}
+
+void dialog_morphParams::on_rbtn_gaus1_toggled(bool checked)
+{
+    if (checked)
+    {
+        ui->spinDbl_mu1->setEnabled(true);
+        ui->spinDbl_sigma1->setEnabled(true);
+        ui->spinDbl_a1->setEnabled(false);
+        ui->spinDbl_b1->setEnabled(false);
+    }
+}
+
+void dialog_morphParams::on_rbtn_gaus2_toggled(bool checked)
+{
+    if (checked)
+    {
+        ui->spinDbl_mu2->setEnabled(true);
+        ui->spinDbl_sigma2->setEnabled(true);
+        ui->spinDbl_a2->setEnabled(false);
+        ui->spinDbl_b2->setEnabled(false);
+    }
 }

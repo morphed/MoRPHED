@@ -18,6 +18,7 @@ public:
     explicit dialog_morphParams(XMLReadWrite &XmlObj, QWidget *parent = 0);
     ~dialog_morphParams();
 
+    void setupDisplay();
     void setupPlots();
     void setValues();
     void updatePlots();
@@ -28,6 +29,14 @@ private slots:
     void on_btn_ok_clicked();
 
     void on_btn_update_clicked();
+
+    void on_rbtn_exp2_toggled(bool checked);
+
+    void on_rbtn_exp1_toggled(bool checked);
+
+    void on_rbtn_gaus1_toggled(bool checked);
+
+    void on_rbtn_gaus2_toggled(bool checked);
 
 private:
     Ui::dialog_morphParams *ui;
