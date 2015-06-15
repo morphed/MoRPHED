@@ -19,6 +19,11 @@ dialog_delftParams::~dialog_delftParams()
     delete ui;
 }
 
+bool dialog_delftParams::getCloseOk()
+{
+    return closeOk;
+}
+
 void dialog_delftParams::on_btn_cancel_clicked()
 {
     this->close();

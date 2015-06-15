@@ -18,9 +18,11 @@ public:
     explicit dialog_morphParams(XMLReadWrite &XmlObj, QWidget *parent = 0);
     ~dialog_morphParams();
 
+    bool getCloseOk();
     void setupDisplay();
     void setupPlots();
-    void setValues();
+    void setPathLengthValues();
+    void setErosionValues();
     void updatePlots();
 
 private slots:

@@ -423,7 +423,7 @@ void MORPH_Delft3DIO::run()
         {
             count = 0;
 
-            while ((!exist1 || !exist2 || !exist3 || !exist4) && count < 50)
+            while ((!exist1 || !exist2 || !exist3 || !exist4) && count < 150)
             {
                 qDebug()<<"starting qp "<<count;
                 processQp.start(qpName, qpParams);

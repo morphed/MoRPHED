@@ -20,6 +20,11 @@ dialog_inputs::~dialog_inputs()
     delete ui;
 }
 
+bool dialog_inputs::getCloseOk()
+{
+    return closeOk;
+}
+
 void dialog_inputs::setupPlot()
 {
     ui->plot_hydro->addGraph();

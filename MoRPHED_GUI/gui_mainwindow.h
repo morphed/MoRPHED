@@ -23,7 +23,10 @@ public:
     explicit GUI_MainWindow(QWidget *parent = 0);
     ~GUI_MainWindow();
 
+    void checkRun();
     void closeEvent(QCloseEvent *event);
+    void disableButtons();
+    void enableButtons();
 
 private slots:
     void on_btn_description_clicked();
@@ -47,6 +50,7 @@ private:
 
     XMLReadWrite XmlGui;
     QString filenameXml, baseDir;
+    bool morphOk, delftOk;
 };
 
 #endif // GUI_MAINWINDOW_H

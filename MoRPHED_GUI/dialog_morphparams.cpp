@@ -19,6 +19,11 @@ dialog_morphParams::~dialog_morphParams()
     delete ui;
 }
 
+bool dialog_morphParams::getCloseOk()
+{
+    return closeOk;
+}
+
 void dialog_morphParams::setupDisplay()
 {
     ui->rbtn_custom1->setEnabled(false);
@@ -61,7 +66,7 @@ void dialog_morphParams::setupPlots()
     ui->plot_pl2->yAxis->setSubTickCount(1);
 }
 
-void dialog_morphParams::setValues()
+void dialog_morphParams::setPathLengthValues()
 {
     closeOk = true;
     plotOk = true;
@@ -123,7 +128,10 @@ void dialog_morphParams::setValues()
         plotOk = false;
         QMessageBox::information(this, "Invalid Path-Length Parameters", "Import Path-Length Distribution parameters must be greater than 0.0");
     }
+}
 
+void dialog_morphParams::setErosionValues()
+{
     if (areaThresh<=0.0 || slpThresh<=0.0|| shrThresh<= 0.0 || erosionFactor<=0.0 || grainSize<=0.0)
     {
         closeOk = false;
@@ -133,7 +141,7 @@ void dialog_morphParams::setValues()
 
 void dialog_morphParams::updatePlots()
 {
-    setValues();
+    setPathLengthValues();
     x1.clear(), x2.clear(), y1.clear(), y2.clear();
     int nLength = length1 / nCellWidth;
 
@@ -199,7 +207,8 @@ void dialog_morphParams::on_btn_cancel_clicked()
 
 void dialog_morphParams::on_btn_ok_clicked()
 {
-    setValues();
+    setPathLengthValues();
+    setErosionValues();
     writeXml();
     checkClose();
 }

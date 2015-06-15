@@ -18,6 +18,8 @@ public:
     explicit dialog_delftParams(XMLReadWrite &XmlObj, QWidget *parent = 0);
     ~dialog_delftParams();
 
+    bool getCloseOk();
+
 private slots:
     void on_btn_cancel_clicked();
 

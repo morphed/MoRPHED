@@ -19,6 +19,7 @@ public:
     explicit dialog_inputs(XMLReadWrite &XmlObj, QWidget *parent = 0);
     ~dialog_inputs();
 
+    bool getCloseOk();
     void setupPlot();
     void updatePlot();
 

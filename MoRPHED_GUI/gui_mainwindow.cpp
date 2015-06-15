@@ -8,6 +8,8 @@ GUI_MainWindow::GUI_MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    disableButtons();
+
     GDALAllRegister();
 }
 
@@ -16,10 +18,37 @@ GUI_MainWindow::~GUI_MainWindow()
     delete ui;
 }
 
+void GUI_MainWindow::checkRun()
+{
+    if (morphOk && delftOk)
+    {
+        ui->btn_run->setEnabled(true);
+    }
+}
+
 void GUI_MainWindow::closeEvent(QCloseEvent *event)
 {
-    qDebug()<<"closing";
     event->accept();
+}
+
+void GUI_MainWindow::disableButtons()
+{
+    ui->btn_description->setEnabled(false);
+    ui->btn_inputs->setEnabled(false);
+    ui->btn_morphParam->setEnabled(false);
+    ui->btn_delftParam->setEnabled(false);
+    ui->btn_outputs->setEnabled(false);
+    ui->btn_run->setEnabled(false);
+}
+
+void GUI_MainWindow::enableButtons()
+{
+    ui->btn_description->setEnabled(true);
+    ui->btn_inputs->setEnabled(true);
+    ui->btn_morphParam->setEnabled(true);
+    ui->btn_delftParam->setEnabled(true);
+    ui->btn_outputs->setEnabled(true);
+    ui->btn_run->setEnabled(true);
 }
 
 void GUI_MainWindow::on_btn_description_clicked()
@@ -32,6 +61,8 @@ void GUI_MainWindow::on_btn_inputs_clicked()
     dialog_inputs dialog(XmlGui, this);
     dialog.setModal(true);
     dialog.exec();
+
+    ui->btn_morphParam->setEnabled(dialog.getCloseOk());
 }
 
 void GUI_MainWindow::on_btn_morphParam_clicked()
@@ -39,6 +70,9 @@ void GUI_MainWindow::on_btn_morphParam_clicked()
     dialog_morphParams dialog(XmlGui, this);
     dialog.setModal(true);
     dialog.exec();
+
+    morphOk = dialog.getCloseOk();
+    checkRun();
 }
 
 void GUI_MainWindow::on_btn_delftParam_clicked()
@@ -46,6 +80,9 @@ void GUI_MainWindow::on_btn_delftParam_clicked()
     dialog_delftParams dialog(XmlGui, this);
     dialog.setModal(true);
     dialog.exec();
+
+    delftOk = dialog.getCloseOk();
+    checkRun();
 }
 
 void GUI_MainWindow::on_btn_outputs_clicked()
@@ -55,6 +92,8 @@ void GUI_MainWindow::on_btn_outputs_clicked()
 
 void GUI_MainWindow::on_btn_run_clicked()
 {
+    disableButtons();
+
     QDateTime start, end, floodStart, floodEnd, delftStart, delftEnd, bankEStart, bankEEnd, bedEStart, bedEEnd;
 
     start = QDateTime::currentDateTime();
@@ -137,6 +176,8 @@ void GUI_MainWindow::on_btn_run_clicked()
     delete(delft);
     delete(trans);
 
+    enableButtons();
+
     qDebug()<<"FINISHED!";
 }
 
@@ -149,6 +190,7 @@ void GUI_MainWindow::on_actionNew_Project_triggered()
     if (filename.isNull() || filename.isEmpty())
     {
         QMessageBox::information(this, "Empty or Null Path", "The directory path is empty or null, you must select a valid directory to continue");
+        disableButtons();
     }
 
     else
@@ -161,6 +203,10 @@ void GUI_MainWindow::on_actionNew_Project_triggered()
         filenameXml = filename + "/" + name + ".morph";
         XmlGui.setDocumentFilename(filenameXml);
         XmlGui.printXML();
+
+        ui->btn_inputs->setEnabled(true);
+        ui->btn_description->setEnabled(true);
+        ui->btn_delftParam->setEnabled(true);
     }
 }
 
@@ -174,11 +220,13 @@ void GUI_MainWindow::on_actionOpen_Project_triggered()
     if (filename.isNull() || filename.isEmpty())
     {
         QMessageBox::information(this, "Empty or Null Path", "The file path is null or empty, you must select a valid *.morph file to continue");
+        disableButtons();
     }
     else
     {
         baseDir = file.absolutePath();
         XmlGui.loadDocument(filename, 1);
         XmlGui.writeNodeData("ProjectDirectory",baseDir);
+        enableButtons();
     }
 }
