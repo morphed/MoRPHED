@@ -7,6 +7,8 @@ GUI_MainWindow::GUI_MainWindow(QWidget *parent) :
     ui(new Ui::GUI_MainWindow)
 {
     ui->setupUi(this);
+    baseName = "MoRPHED";
+    this->setWindowTitle(baseName);
 
     disableButtons();
 
@@ -49,6 +51,11 @@ void GUI_MainWindow::enableButtons()
     ui->btn_delftParam->setEnabled(true);
     ui->btn_outputs->setEnabled(true);
     ui->btn_run->setEnabled(true);
+}
+
+void GUI_MainWindow::setName(QString name)
+{
+    this->setWindowTitle(baseName + "    " + name);
 }
 
 void GUI_MainWindow::on_btn_description_clicked()
@@ -207,6 +214,9 @@ void GUI_MainWindow::on_actionNew_Project_triggered()
         ui->btn_inputs->setEnabled(true);
         ui->btn_description->setEnabled(true);
         ui->btn_delftParam->setEnabled(true);
+
+        QDir bd(baseDir);
+        setName(bd.dirName());
     }
 }
 
@@ -228,5 +238,8 @@ void GUI_MainWindow::on_actionOpen_Project_triggered()
         XmlGui.loadDocument(filename, 1);
         XmlGui.writeNodeData("ProjectDirectory",baseDir);
         enableButtons();
+
+        QDir bd(baseDir);
+        setName(bd.dirName());
     }
 }

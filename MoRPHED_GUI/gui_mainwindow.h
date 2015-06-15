@@ -27,6 +27,7 @@ public:
     void closeEvent(QCloseEvent *event);
     void disableButtons();
     void enableButtons();
+    void setName(QString name);
 
 private slots:
     void on_btn_description_clicked();
@@ -49,7 +50,7 @@ private:
     Ui::GUI_MainWindow *ui;
 
     XMLReadWrite XmlGui;
-    QString filenameXml, baseDir;
+    QString filenameXml, baseDir, baseName;
     bool morphOk, delftOk;
 };
 
