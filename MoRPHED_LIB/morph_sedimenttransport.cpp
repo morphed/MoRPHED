@@ -14,7 +14,6 @@ MORPH_SedimentTransport::MORPH_SedimentTransport(QString xmlPath) : MORPH_Base(x
     QString path = qsTempPath + "/slope_init.tif";
     Raster.slopeTOF(qsOldDemPath.toStdString().c_str(), path.toStdString().c_str());
     maxSlope = Raster.findMax(path.toStdString().c_str());
-    qDebug()<<"max slope "<<maxSlope;
 }
 
 void MORPH_SedimentTransport::addDeposition()
@@ -45,7 +44,6 @@ void MORPH_SedimentTransport::addDeposition()
             {
                 if (fabs(*oldVal) > 0.0)
                 {
-                    //qDebug()<<"adding to exported in add depo "<<exported<< *oldVal;
                     exported += qvDepoAmt[i];
                 }
             }
@@ -538,7 +536,7 @@ void MORPH_SedimentTransport::erodeBanks()
                 nLateral = round(valRow[j]);
                 if (valRow[j] > 0.5 && nLateral < 1)
                 {
-                    qDebug()<<"lateral erosion error "<<valRow[j]<< nLateral;
+                    qDebug()<<"ERROR: lateral erosion error "<<valRow[j]<< nLateral;
                 }
 
                 for (int k=0; k<9; k++)
@@ -602,14 +600,14 @@ void MORPH_SedimentTransport::erodeBanks()
                         else
                         {
                             erode = false;
-                            qDebug()<<"ERROR: Aspect value out of range";
+                            qDebug()<<"ERROR: Aspect value out of range "<<aspRow[j];
                         }
                     }
 
                     if ((rowNew>nRows-1 || rowNew<1) || (colNew>nCols-1 || colNew<1))
                     {
                         erode = false;
-                        qDebug()<<"ERROR: Target cell out of range "<<rowNew<< colNew;
+                        qDebug()<<"ERROR: erode bank target cell out of range "<<rowNew<< colNew;
                     }
 
                     if (erode)
@@ -647,7 +645,6 @@ void MORPH_SedimentTransport::erodeBanks()
     GDALClose(pOldDem);
     GDALClose(pNewDem);
     GDALClose(pErodeRaster);
-    qDebug()<<"bank erode datasets closed";
 
     CPLFree(valRow);
     CPLFree(aspRow);
@@ -692,7 +689,6 @@ void MORPH_SedimentTransport::findDepositionCells(int row, int col, double amt)
                     if (fabs(sedimentRemaining) > 0.0)
                     {
                         exported += sedimentRemaining;
-                        //qDebug()<<"adding to exported "<<exported<< sedimentRemaining;
                     }
                 }
                 sedimentRemaining = 0.0;
@@ -726,7 +722,6 @@ void MORPH_SedimentTransport::findDepositionCells(int row, int col, double amt)
                 if (fabs(sedimentRemaining) > 0.0)
                 {
                     exported += sedimentRemaining;
-                    //qDebug()<<"adding to exported "<<exported<< sedimentRemaining;
                 }
             }
             sedimentRemaining = 0.0;
@@ -739,11 +734,8 @@ void MORPH_SedimentTransport::findDepositionCells(int row, int col, double amt)
 void MORPH_SedimentTransport::importSediment()
 {
     pathLength1.setupDistribution(plDistLength2, sigA2, muB2, nPlDistType2, cellWidth);
-    qDebug()<<"pl reset for import"<<pathLength1.getLength()<< pathLength1.getSigA()<< pathLength1.getMuB();
 
     findImportCells();
-
-    qDebug()<<"copying to import depo raster";
 
     QString path1 = qsOutputPath + "/" + qsFloodName + "/GTIFF/ImportDepo" + QString::number(nCurrentIteration+1) + ".tif";
     QFile file(path1);
@@ -757,37 +749,25 @@ void MORPH_SedimentTransport::importSediment()
 
     clearDeposition();
 
-    qDebug()<<"creating dod";
     loadDrivers();
     createDoD();
-    qDebug()<<"done";
     path1 = qsOutputPath + "/" + qsFloodName + "/GTIFF/DoD_" + QString::number(nCurrentIteration+1) + "_temp.tif";
 
-    qDebug()<<"starting add";
     Raster.add(qsNewDemPath.toStdString().c_str(), path1.toStdString().c_str());
-
-    //sloughBanks();
-    //qDebug()<<"slough done, print undeposited";
 
     qDebug()<<"undeposited "<<unaccounted;
     Raster.copyBoundary(qsNewDemPath.toStdString().c_str(), nDirDSbound);
     Raster.copyBoundary(qsNewDemPath.toStdString().c_str(), nDirUSbound);
 
-    //GDALDataset *pTemp, *pTemp2;
-
     QString path = qsOutputPath + "/" + qsFloodName + "/GTIFF/DEM_" + QString::number(nCurrentIteration+1) + ".tif";
 
-    qDebug()<<"copying new dem";
     file.setFileName(path);
     if (file.exists())
     {
         file.remove();
     }
     QFile::copy(qsNewDemPath, path);
-    qDebug()<<"deleting old dem "<<qsOldDemPath;
-    //GDALDeleteDataset(pDriverTIFF, qsOldDemPath.toStdString().c_str());
     QFile::remove(qsOldDemPath);
-    qDebug()<<"old dem deleted";
     QFile::copy(qsNewDemPath, qsOldDemPath);
 
 
@@ -830,9 +810,7 @@ void MORPH_SedimentTransport::loadRasters()
     }
     QFile::copy(qsDepthPath, path);
 
-    qDebug()<<"starting flow direction";
     Raster.flowDirection(qsXvelPath.toStdString().c_str(), qsYvelPath.toStdString().c_str(), qsFdirPath.toStdString().c_str());
-    qDebug()<<"flow direction done";
 
     path = qsOutputPath + "/" + qsFloodName + "/GTIFF/FlowDir" + QString::number(nCurrentIteration+1) + ".tif";
     file.setFileName(path);
@@ -844,7 +822,6 @@ void MORPH_SedimentTransport::loadRasters()
 
     GDALDataset *pErode, *pDepo;
 
-    qDebug()<<"making erode deposit layers "<<qsErodePath<< qsDepoPath;
     pDriverTIFF = GetGDALDriverManager()->GetDriverByName("GTiff");
 
     pErode = pDriverTIFF->Create(qsErodePath.toStdString().c_str(), nCols, nRows, 1, GDT_Float32, NULL);
@@ -856,12 +833,9 @@ void MORPH_SedimentTransport::loadRasters()
     pDepo->GetRasterBand(1)->SetNoDataValue(noData);
     pErode->GetRasterBand(1)->Fill(0.0);
     pDepo->GetRasterBand(1)->Fill(0.0);
-    qDebug()<<"erode depo done";
 
     GDALClose(pErode);
     GDALClose(pDepo);
-
-    qDebug()<<"loading done";
 }
 
 void MORPH_SedimentTransport::makeRegionInput()
@@ -944,46 +918,27 @@ void MORPH_SedimentTransport::recalcRegionInput()
 void MORPH_SedimentTransport::runBankErode()
 {
     MORPH_Raster Raster;
-    qDebug()<<"raster made";
 
     clearErosion();
-    qDebug()<<"erosion cleared";
 
     Raster.slopeTOF(qsNewDemPath.toStdString().c_str(), qsSlopePath.toStdString().c_str());
-    qDebug()<<"slope made";
     Raster.filterLowPass(qsSlopePath.toStdString().c_str(), qsSlopeFiltPath.toStdString().c_str());
-    qDebug()<<"slope filtered";
     Raster.aspect(qsNewDemPath.toStdString().c_str(), qsAspectPath.toStdString().c_str());
-    qDebug()<<"aspect made";
 
     int nRegions;
 
     makeRegionInput();
-    qDebug()<<"region input done";
     nRegions = Raster.regions(qsInterRegPath.toStdString().c_str(), qsRegionsPath.toStdString().c_str());
-    qDebug()<<"regions 1 done "<<nRegions;
     eliminateRegionsArea(nRegions);
-    qDebug()<<"regions eliminated by area";
     recalcRegionInput();
-    qDebug()<<"region input recalced";
     nRegions = Raster.regions(qsInterRegPath.toStdString().c_str(), qsRegionsPath.toStdString().c_str());
-    qDebug()<<"regions 2 done";
     calcBankShear();
-    qDebug()<<"bank shear done";
     eliminateRegionsValue(nRegions);
-    qDebug()<<"regions eliminated by value";
     recalcRegionInput();
-    qDebug()<<"region input recalced";
     nRegions = Raster.regions(qsInterRegPath.toStdString().c_str(), qsRegionsPath.toStdString().c_str());
-    qDebug()<<"regions 3 done";
     Raster.filterLowPass(qsRegShearPath.toStdString().c_str(), qsBankShear.toStdString().c_str());
-    qDebug()<<"filter done, calc lat retreat";
     calcLateralRetreat();
-    qDebug()<<"lat retreate calced";
-    //Raster.filterLowPass(qsLateralErode.toStdString().c_str(), qsBankErodeInput.toStdString().c_str());
-    qDebug()<<"lat retreat done";
     erodeBanks();
-    qDebug()<<"bank erode done";
 
     Raster.subtract(qsNewDemPath.toStdString().c_str(), qsOldDemPath.toStdString().c_str(), qsBankErode.toStdString().c_str());
     GDALDataset *pTemp, *pBankErode;
@@ -1009,36 +964,26 @@ void MORPH_SedimentTransport::runBankErode()
 void MORPH_SedimentTransport::runBedErode()
 {
     pathLength1.setupDistribution(plDistLength1, sigA1, muB1, nPlDistType1, cellWidth);
-    qDebug()<<"pl reset "<<pathLength1.getLength()<< pathLength1.getSigA()<< pathLength1.getMuB();
 
     //create object for raster operations
     MORPH_Raster Raster;
 
     //deposit sediment from bank erosoin
-    qDebug()<<"depositing bank sediment";
     QString path = qsOutputPath + "/" + qsFloodName + "/GTIFF/BankErosion" + QString::number(nCurrentIteration+1) + ".tif";
     runDeposition(path.toStdString().c_str());
-    qDebug()<<"bank depo done";
-    //Raster.add(qsNewDemPath.toStdString().c_str(), qsDepoPath.toStdString().c_str());
-    qDebug()<<"bank depo added";
 
     openDepositionRaster();
     GDALDataset *pTemp;
 
     path = qsOutputPath + "/" + qsFloodName + "/GTIFF/BankDeposition" + QString::number(nCurrentIteration+1) + ".tif";
-    qDebug()<<"copying bank depo raster";
     pDriverTIFF = GetGDALDriverManager()->GetDriverByName("GTiff");
     pTemp = pDriverTIFF->CreateCopy(path.toStdString().c_str(), pDepositRaster, FALSE, NULL, NULL, NULL);
-    qDebug()<<"copy done";
 
     GDALClose(pDepositRaster);
     GDALClose(pTemp);
 
-    qDebug()<<"clearing depo";
     clearDeposition();
-    qDebug()<<"done, clearing erosion";
     clearErosion();
-    qDebug()<<"bank deposition done, erosion cleared";
 
     //calculate slope from the starting DEM
     Raster.slopeTOF(qsNewDemPath.toStdString().c_str(), qsSlopePath.toStdString().c_str());
@@ -1057,7 +1002,6 @@ void MORPH_SedimentTransport::runBedErode()
     float *shrVal = (float*) CPLMalloc(sizeof(float)*1);
     float *slpVal = (float*) CPLMalloc(sizeof(float)*1);
 
-    qDebug()<<"starting loop";
     for (int i=2; i<nRows-2; i++)
     {
         for (int j=2; j<nCols-2; j++)
@@ -1088,8 +1032,6 @@ void MORPH_SedimentTransport::runBedErode()
                 if (averagedShear >= shearCrit)
                 {
                     sedimentEroded = erodeBedFlow(shearCrit, averagedShear, i, j);
-                    //qDebug()<<"erosion done";
-                    //qDebug()<<shearCrit<< shieldsStress<< test<< test2;
                 }
             }
         }
@@ -1114,23 +1056,16 @@ void MORPH_SedimentTransport::runBedErode()
 
     pErodeFilter = (GDALDataset*) GDALOpen(qsErodeFilterPath.toStdString().c_str(), GA_ReadOnly);
     path = qsOutputPath + "/" + qsFloodName + "/GTIFF/BedErosion" + QString::number(nCurrentIteration+1) + ".tif";
-    qDebug()<<"copying bed erode raster";
     pTemp = pDriverTIFF->CreateCopy(path.toStdString().c_str(), pErodeFilter, FALSE, NULL, NULL, NULL);
-    qDebug()<<"copy done";
 
     GDALClose(pErodeFilter);
     GDALClose(pTemp);
 
     //subtract the filtered erosoin from the new DEM
     //Raster.subtract(qsNewDemPath.toStdString().c_str(), qsErodeFilterPath.toStdString().c_str());
-    qDebug()<<"summing erosion from bed";
-    //double sum = Raster.sum(qsErodePath.toStdString().c_str());
-    qDebug()<<"done";
     //counterErodEvent += sum;
     //counterErodTotal += sum;
-    qDebug()<<"clearing erosion from bed";
     clearErosion();
-    qDebug()<<"done";
 
     //deposit eroded sediment
     runDeposition(qsErodeFilterPath.toStdString().c_str());
@@ -1139,9 +1074,6 @@ void MORPH_SedimentTransport::runBedErode()
     openDepositionRaster();
 
     path = qsOutputPath + "/" + qsFloodName + "/GTIFF/BedDeposition" + QString::number(nCurrentIteration+1) + ".tif";
-    qDebug()<<"copying bed depo raster";
-    //pDriverTIFF = GetGDALDriverManager()->GetDriverByName("GTiff");
-    qDebug()<<"driver set "<<path;
     pTemp = pDriverTIFF->CreateCopy(path.toStdString().c_str(), pDepositRaster, FALSE, NULL, NULL, NULL);
 
     GDALClose(pTemp);
@@ -1152,9 +1084,6 @@ void MORPH_SedimentTransport::runBedErode()
     qDebug()<<"FINAL exported "<<exported;
     qDebug()<<"deposition "<<counterDepoEvent<< counterDepoTotal;
     qDebug()<<"erosion "<<counterErodEvent<< counterErodTotal;
-
-    //createDoD();
-    //qDebug()<<"dod created";
 }
 
 void MORPH_SedimentTransport::setImportCells(QVector<int> rows, QVector<int> cols)
@@ -1274,8 +1203,6 @@ void MORPH_SedimentTransport::sloughBanks()
     }
 
 
-    //GDALAllRegister();
-    //qDebug()<<"gdal registered";
     GDALClose(pSlopeRaster);
     qDebug()<<"slope closed";
     GDALClose(pNewDem);
@@ -1302,15 +1229,11 @@ void MORPH_SedimentTransport::transportSediment()
         findDepositionCells(qvSeedRow[i], qvSeedCol[i], qvSeedAmt[i]);
     }
 
-    qDebug()<<"deposition cells found";
-
     addDeposition();
-    qDebug()<<"deposition added";
 
     MORPH_Raster Raster;
 
     Raster.add(qsNewDemPath.toStdString().c_str(), qsDepoPath.toStdString().c_str());
-    qDebug()<<"new dem updated";
 }
 
 double MORPH_SedimentTransport::averageShear_FlowLine(int row, int col, int cellsUS, int cellsDS)
@@ -1337,7 +1260,6 @@ double MORPH_SedimentTransport::averageShear_FlowLine(int row, int col, int cell
     {
         //find next downstream cell
         qvResult = findNextCell(qvResult[2], qvResult[3], qvResult[0], qvResult[1]);
-        //qDebug()<<"ave shear next cell found";
 
         //make sure new cell is in a valid location
         if (qvResult[0] < nRows-2 && qvResult[0] > 1 && qvResult[1] < nCols-2 && qvResult[1] > 1)
@@ -1378,7 +1300,6 @@ double MORPH_SedimentTransport::averageShear_FlowLine(int row, int col, int cell
         }
         else
         {
-            //qDebug()<<"break out of loop, backward cell out of range";
             //break;
         }
     }
@@ -1423,23 +1344,15 @@ void MORPH_SedimentTransport::createDoD()
     pDemOfDiff->GetRasterBand(1)->Fill(0.0);
 
     GDALClose(pDemOfDiff);
-    qDebug()<<"dod dataset setup";
 
     MORPH_Raster Raster;
-    qDebug()<<"subtracting bank";
-    //Raster.subtract(dodPath.toStdString().c_str(), bankErode.toStdString().c_str());
-    qDebug()<<"subtracting bed "<<bedErode;
+
     Raster.subtract(dodPath.toStdString().c_str(), bedErode.toStdString().c_str());
-    qDebug()<<"adding bank";
     Raster.add(dodPath.toStdString().c_str(), bankDepo.toStdString().c_str());
-    qDebug()<<"adding bed";
     Raster.add(dodPath.toStdString().c_str(), bedDepo.toStdString().c_str());
-    qDebug()<<"adding import";
     Raster.add(dodPath.toStdString().c_str(), importDepo.toStdString().c_str());
-    qDebug()<<"fixing depo";
 
     fixDeposition(dodPath);
-    qDebug()<<"done";
 }
 
 double MORPH_SedimentTransport::erodeBedFlow(double shearCrit, double shear, int row, int col)
@@ -1477,7 +1390,6 @@ double MORPH_SedimentTransport::erodeBedFlow(double shearCrit, double shear, int
     for (int i=1; i<11; i++)
     {
         qvResult = findNextCell(qvResult[2], qvResult[3], qvResult[0], qvResult[1]);
-        //qDebug()<<"erode bed next cell found";
 
         if (qvResult[0] < nRows-2 && qvResult[0] > 1 && qvResult[1] < nCols-2 && qvResult[1] > 1)
         {
@@ -1495,7 +1407,6 @@ double MORPH_SedimentTransport::erodeBedFlow(double shearCrit, double shear, int
         {
             erode = false;
         }
-        //qDebug()<<"fwd "<<i<<" of 11";
     }
 
     //reset locatoin variables
@@ -1508,7 +1419,6 @@ double MORPH_SedimentTransport::erodeBedFlow(double shearCrit, double shear, int
     for (int i=1; i<11; i++)
     {
         qvResult = findNextCell_Backward(qvResult[2], qvResult[3], qvResult[0], qvResult[1]);
-        //qDebug()<<"erode cell bkwd done";
 
         if (qvResult[0] < nRows-2 && qvResult[0] > 1 && qvResult[1] < nCols-2 && qvResult[1] > 1)
         {
@@ -1524,7 +1434,6 @@ double MORPH_SedimentTransport::erodeBedFlow(double shearCrit, double shear, int
         {
             erode = false;
         }
-        //qDebug()<<"bkwd "<<i<<" of 11";
     }
 
     //divide amount of sediment by number of cells it's being distributed to
@@ -1532,7 +1441,6 @@ double MORPH_SedimentTransport::erodeBedFlow(double shearCrit, double shear, int
 
     if (erode)
     {
-        //qDebug()<<"eroding";
         for (int i=0; i<qvRow.size(); i++)
         {
             //update new dem with erosion
@@ -1542,7 +1450,6 @@ double MORPH_SedimentTransport::erodeBedFlow(double shearCrit, double shear, int
             *newVal += *oldVal;
             pErodeRaster->GetRasterBand(1)->RasterIO(GF_Write,qvCol[i],qvRow[i],1,1,newVal,1,1,GDT_Float32,0,0);
         }
-        //qDebug()<<"done";
     }
 
     //clear vectors
@@ -1562,15 +1469,11 @@ double MORPH_SedimentTransport::erodeBedFlow(double shearCrit, double shear, int
 
 void MORPH_SedimentTransport::findImportCells()
 {
-    qDebug()<<"finding import cells";
     GDALAllRegister();
-    qDebug()<<"clearing erosion";
     clearErosion();
-    qDebug()<<"erosion cleared";
 
     qvImportCol.clear();
     qvImportRow.clear();
-    qDebug()<<"vectors cleared";
 
     int row = 0, col = 0;
     double imported;
@@ -1588,7 +1491,6 @@ void MORPH_SedimentTransport::findImportCells()
         imported = exported * import[nCurrentIteration];
     }
 
-    qDebug()<<"vars set, amt imported "<<imported<< exported;
     exported = 0.0;
 
     if (nDirUSbound == 1)
@@ -1639,13 +1541,11 @@ void MORPH_SedimentTransport::findImportCells()
     openErosionRaster();
 
     *fdirVal = (imported / (qvImportRow.size()*1.0));
-    qDebug()<<"import value found";
 
     for (int i=0; i<qvImportRow.size(); i++)
     {
         pErodeRaster->GetRasterBand(1)->RasterIO(GF_Write, qvImportCol[i], qvImportRow[i], 1, 1, fdirVal, 1, 1, GDT_Float32, 0, 0);
     }
-    qDebug()<<"import erode filled";
 
     GDALClose(pErodeRaster);
 
@@ -1653,7 +1553,6 @@ void MORPH_SedimentTransport::findImportCells()
 
     qDebug()<<"running import deposition";
     runDeposition(qsErodePath.toStdString().c_str());
-    qDebug()<<"import depo done running";
 }
 
 QVector<double> MORPH_SedimentTransport::findNextCell(double startX, double startY, int prevRow, int prevCol)
@@ -1746,6 +1645,11 @@ QVector<double> MORPH_SedimentTransport::findNextCell_Backward(double startX, do
     pFdirRaster->GetRasterBand(1)->RasterIO(GF_Read,startCol,startRow,1,1,fdir,1,1,GDT_Float32,0,0);
 
     activeDirection = *fdir;
+
+    if (activeDirection > 360.0 && activeDirection < 361.0)
+    {
+        activeDirection = 359.9;
+    }
 
     if (activeDirection <= 180.0)
     {
@@ -2834,7 +2738,6 @@ void MORPH_SedimentTransport::runDeposition(const char *erosionRasterPath)
                     {
                         if (k==2 || k==5 || k==8 )
                         {
-                            //qDebug()<<"depth at start cell: "<<dirWin[i];
                             if (dirWin[k] > 0.0)
                             {
                                 wetCells++;
@@ -2853,7 +2756,6 @@ void MORPH_SedimentTransport::runDeposition(const char *erosionRasterPath)
                         {
                             if (dirWin[k] > 0.0)
                             {
-                                //qDebug()<<"depth at start cell: "<<dirWin[i];
                                 wetCells++;
                                 rows.append(i + ROW_OFFSET[k]);
                                 cols.append(j + COL_OFFSET[k]);
@@ -2867,7 +2769,6 @@ void MORPH_SedimentTransport::runDeposition(const char *erosionRasterPath)
                     {
                         if (k==0 || k==3 ||  k==6 )
                         {
-                            //qDebug()<<"depth at start cell: "<<dirWin[i];
                             if (dirWin[k] > 0.0)
                             {
                                 wetCells++;
@@ -2883,7 +2784,6 @@ void MORPH_SedimentTransport::runDeposition(const char *erosionRasterPath)
                     {
                         if (k==6 || k==7 || k==8 )
                         {
-                            //qDebug()<<"depth at start cell: "<<dirWin[i];
                             if (dirWin[k] > 0.0)
                             {
                                 wetCells++;
@@ -2899,7 +2799,6 @@ void MORPH_SedimentTransport::runDeposition(const char *erosionRasterPath)
                     {
                         if (k==1 || k==2 || k==5)
                         {
-                            //qDebug()<<"depth at start cell: "<<dirWin[i];
                             if (dirWin[k] > 0.0)
                             {
                                 wetCells++;
@@ -2915,7 +2814,6 @@ void MORPH_SedimentTransport::runDeposition(const char *erosionRasterPath)
                     {
                         if (k==1 || k==0 || k==3)
                         {
-                            //qDebug()<<"depth at start cell: "<<dirWin[i];
                             if (dirWin[k] > 0.0)
                             {
                                 wetCells++;
@@ -2931,7 +2829,6 @@ void MORPH_SedimentTransport::runDeposition(const char *erosionRasterPath)
                     {
                         if (k==3 || k==6 || k==7)
                         {
-                            //qDebug()<<"depth at start cell: "<<dirWin[i];
                             if (dirWin[k] > 0.0)
                             {
                                 wetCells++;
@@ -2948,7 +2845,6 @@ void MORPH_SedimentTransport::runDeposition(const char *erosionRasterPath)
                     {
                         if (k==5 || k==7 || k==8 )
                         {
-                            //qDebug()<<"depth at start cell: "<<dirWin[i];
                             if (dirWin[k] > 0.0)
                             {
                                 wetCells++;
@@ -2965,7 +2861,6 @@ void MORPH_SedimentTransport::runDeposition(const char *erosionRasterPath)
 
                 if (wetCells == 0)
                 {
-                    //qDebug()<<"no wet cells, depo not happening "<<i<< j<< erdRow[j];
                     if (dirWin[4] > 0.0)
                     {
                         wetCells++;
@@ -3001,7 +2896,6 @@ void MORPH_SedimentTransport::runDeposition(const char *erosionRasterPath)
                         findDepositionCells(rows[k], cols[k], cellSed);
                         addDeposition();
                     }
-                    //qDebug()<<"depositing "<<erdRow[j]<<" from "<<erosionRasterPath;
                 }
 
                 rows.clear();
@@ -3012,15 +2906,12 @@ void MORPH_SedimentTransport::runDeposition(const char *erosionRasterPath)
 
             }
         }
-        //qDebug()<<"depo row done "<<i;
     }
 
-    qDebug()<<"closing datasets";
     GDALClose(pRaster);
     GDALClose(pFdirRaster);
     GDALClose(pDepthRaster);
 
-    qDebug()<<"freeing memory";
     CPLFree(erdRow);
     CPLFree(dirWin);
     qDebug()<<"done depositing";

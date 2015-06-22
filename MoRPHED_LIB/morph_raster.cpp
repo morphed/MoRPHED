@@ -194,7 +194,6 @@ double MORPH_Raster::averageSlope_RowAve(int row1, int row2)
     double row1Ave, row2Ave, aveSlope, distance;
 
     distance = row1 - row2;
-    qDebug()<<distance;
 
     if (distance < 0)
     {

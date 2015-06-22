@@ -158,8 +158,6 @@ void MORPH_Base::init()
 
 
     qsFloodName = MORPH_FileManager::getFloodName(nCurrentIteration);
-    qDebug()<<"pl 1: type "<<nPlDistType1<<" length "<<plDistLength1<<" siga "<<sigA1<<" mub "<<muB1;
-    qDebug()<<"pl 2: type "<<nPlDistType2<<" length "<<plDistLength2<<" siga "<<sigA2<<" mub "<<muB2;
 }
 
 void MORPH_Base::loadDrivers()

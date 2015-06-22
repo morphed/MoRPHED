@@ -66,12 +66,13 @@ QString MORPH_FileManager::copyFileToDirectory(QString originalPath, QString new
         file1.remove();
     }
     result = QFile::copy(originalPath, newPath);
-    qDebug()<<"copying "<<originalPath<<" "<<newPath;
+
     if (!result)
     {
         newPath = QString();
         qDebug()<<"copy unsuccessful";
     }
+
     return newPath;
 }
 

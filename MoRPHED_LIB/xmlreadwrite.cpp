@@ -66,7 +66,6 @@ void XMLReadWrite::loadDocument(QString filename, int type)
             if (doc.setContent(&file))
             {
                 //successful load
-                qDebug()<<"xml loaded successfully";
             }
             else
             {

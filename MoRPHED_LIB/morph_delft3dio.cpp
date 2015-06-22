@@ -9,12 +9,9 @@ MORPH_Delft3DIO::MORPH_Delft3DIO(QString xmlPath) : MORPH_Base(xmlPath)
 
 MORPH_Delft3DIO::~MORPH_Delft3DIO()
 {
-    qDebug()<<"Delft destructor";
     processDelft.kill();
     QString command = "taskkill /pid " + QString::number(nPID);
-    qDebug()<<"exectuing command";
     processDelft.execute(command);
-
 }
 
 void MORPH_Delft3DIO::setDelftData()
@@ -35,11 +32,6 @@ void MORPH_Delft3DIO::calculateDSWSE()
     float *row = (float*) CPLMalloc(sizeof(float)*nCols);
 
     depth = Raster.findMax(qsDelftDemPath.toStdString().c_str()) + dswe[nCurrentIteration];
-    if (depth != newDemMax)
-    {
-        qDebug()<<"DEM MAX ERROR in xyz: class "<<newDemMax<<" func "<<depth;
-    }
-
     depth = newDemMax;
 
     openSourceDEM();
@@ -103,10 +95,7 @@ void MORPH_Delft3DIO::calculateDSWSE()
         {
             qDebug()<<"too many iterations to find correct dswe, using provided value "<<depth<<" "<<q[nCurrentIteration]<<" "<<estQ<<" "<<meanDepth<<" "<<chezy<<" "<<conveyanceTotal;
         }
-        else if (count == 0)
-        {
-            qDebug()<<"first run "<<depth<<" "<<q[nCurrentIteration]<<" "<<estQ<<" "<<meanDepth<<" "<<chezy<<" "<<conveyanceTotal;
-        }
+
         count++;
     }
 
@@ -344,7 +333,6 @@ QVector<int> MORPH_Delft3DIO::getDisRowVector()
 
 void MORPH_Delft3DIO::run()
 {
-    qDebug()<<"start delft run";
     QFile xvt(qsInputPath + "/" + qsFloodName + "/Hydraulics/Xvelocity.xyz"),
             yvt(qsInputPath + "/" + qsFloodName + "/Hydraulics/Yvelocity.xyz"),
             sst(qsInputPath + "/" + qsFloodName + "/Hydraulics/BedShearStress.xyz"),
@@ -401,21 +389,13 @@ void MORPH_Delft3DIO::run()
 
     processQp.start(qpName, qpParams);
     processQp.waitForStarted(-1);
-    //qDebug()<<"qpStarted";
     processQp.waitForFinished(-1);
-    qDebug()<<"qp finished";
     QThread::currentThread()->sleep(10);
-    qDebug()<<"done";
 
     existData = data.exists();
 
     if (existData)
     {
-//        processQp.start(qpName, qpParams);
-//        processQp.waitForStarted(-1);
-//        qDebug()<<"qpStarted";
-//        processQp.waitForFinished(-1);
-//        QThread::currentThread()->sleep(2);
 
         exist1 = xvt.exists(), exist2 = yvt.exists(), exist3 = sst.exists(), exist4 = wdt.exists();
 
@@ -425,20 +405,12 @@ void MORPH_Delft3DIO::run()
 
             while ((!exist1 || !exist2 || !exist3 || !exist4) && count < 150)
             {
-                qDebug()<<"starting qp "<<count;
                 processQp.start(qpName, qpParams);
                 processQp.waitForStarted(-1);
-                qDebug()<<"qpStarted";
                 processQp.waitForFinished(-1);
-                qDebug()<<"qp finished";
                 QThread::currentThread()->sleep(10);
-                qDebug()<<"qp done";
-//                processQp.start(qpName, qpParams);
-//                processQp.waitForStarted(-1);
-//                qDebug()<<"qpStarted";
-//                processQp.waitForFinished(-1);
-//                QThread::currentThread()->sleep(2);
                 exist1 = xvt.exists(), exist2 = yvt.exists(), exist3 = sst.exists(), exist4 = wdt.exists();
+
                 if (!exist1 || !exist2 || !exist3 || !exist4)
                 {
                     QThread::currentThread()->sleep(2);
@@ -449,31 +421,27 @@ void MORPH_Delft3DIO::run()
                     }
                     else
                     {
-                        qDebug()<<"delft data files written";
                         processQp.execute(qpQuit);
                     }
                 }
                 else
                 {
-                    qDebug()<<"delft data files written";
                     processQp.execute(qpQuit);
                 }
                 count++;
                 exist1 = xvt.exists(), exist2 = yvt.exists(), exist3 = sst.exists(), exist4 = wdt.exists();
                 if ((!exist1 || !exist2 || !exist3 || !exist4) && count == 49)
                 {
-                    qDebug()<<"Hydraulics files do not exist after 10 attempts\n";
+                    qDebug()<<"ERROR: Hydraulics files do not exist after 150 attempts\n";
                 }
                 else
                 {
-                    qDebug()<<"delft data files written";
                     processQp.execute(qpQuit);
                 }
             }
         }
         else
         {
-            qDebug()<<"delft data files written";
             processQp.execute(qpQuit);
         }
     }
@@ -567,7 +535,6 @@ void MORPH_Delft3DIO::setDischargePoints()
         }
         count++;
     }
-    qDebug()<<"DISCHARGE DEPTH: "<<depth;
 
     xUSCoords.clear();
     yUSCoords.clear();
@@ -644,7 +611,6 @@ void MORPH_Delft3DIO::setDownstreamBoundary()
     dsCoords.clear();
 
     int count = 0;
-    qDebug()<<"no data"<< noData<<" ncells"<< nCells;
 
     while ((!found3 || !found6) && count<nCells)
     {
@@ -974,11 +940,6 @@ void MORPH_Delft3DIO::writeDEP()
     fout.open(QIODevice::WriteOnly | QIODevice::Text);
     QTextStream out(&fout);
     int count = 0;
-    double max = Raster.findMax(qsExtendedDemPath.toStdString().c_str());
-    if (max != newDemMax)
-    {
-        qDebug()<<"DEM MAX ERROR in dep: class "<<newDemMax<<" func "<<max;
-    }
 
     float *value = (float*) CPLMalloc(sizeof(float)*1);
 
@@ -1417,10 +1378,6 @@ void MORPH_Delft3DIO::writeXYZ()
     double xtlCenter, ytlCenter, xCenter, yCenter;
 
     dMax = Raster.findMax(qsExtendedDemPath.toStdString().c_str());
-    if (dMax != newDemMax)
-    {
-        qDebug()<<"DEM MAX ERROR in xyz: class "<<newDemMax<<" func "<<dMax;
-    }
 
     xtlCenter = topLeftX + (cellWidth/2);
     ytlCenter = topLeftY + (cellHeight/2);
