@@ -45,8 +45,8 @@ private:
 
     XMLReadWrite XmlDoc;
     bool closeOk, plotOk;
-    double length1, length2, sigA1, sigA2, muB1, muB2, slpThresh, shrThresh, areaThresh, erosionFactor, grainSize;
-    int nType1, nType2, nCellWidth;
+    double length1, length2, sigA1, sigA2, muB1, muB2, slpThresh, shrThresh, areaThresh, erosionFactor, grainSize, cellWidth;
+    int nType1, nType2;
     QVector<double> x1, x2, y1, y2;
 
     void checkClose();

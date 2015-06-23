@@ -46,6 +46,7 @@ private slots:
 
     void on_actionOpen_Project_triggered();
 
+
 private:
     Ui::GUI_MainWindow *ui;
 

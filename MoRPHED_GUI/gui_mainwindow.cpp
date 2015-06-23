@@ -41,6 +41,8 @@ void GUI_MainWindow::disableButtons()
     ui->btn_delftParam->setEnabled(false);
     ui->btn_outputs->setEnabled(false);
     ui->btn_run->setEnabled(false);
+    morphOk = false;
+    delftOk = false;
 }
 
 void GUI_MainWindow::enableButtons()
@@ -49,7 +51,7 @@ void GUI_MainWindow::enableButtons()
     ui->btn_inputs->setEnabled(true);
     ui->btn_morphParam->setEnabled(true);
     ui->btn_delftParam->setEnabled(true);
-    ui->btn_outputs->setEnabled(true);
+    //ui->btn_outputs->setEnabled(true);
     ui->btn_run->setEnabled(true);
 }
 
@@ -243,3 +245,4 @@ void GUI_MainWindow::on_actionOpen_Project_triggered()
         setName(bd.dirName());
     }
 }
+

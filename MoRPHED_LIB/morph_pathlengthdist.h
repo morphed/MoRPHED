@@ -18,7 +18,7 @@ public:
     double getValueAtPosition(int nPos);
     void setupDistribution(double length, double sig_a, double mu_b, int type, double cellSize);
 
-    static QVector<double> getDistribution(int nType, double sigA, double muB, int nLength);
+    static QVector<double> getDistribution(int nType, double sigA, double muB, int nLength, double cellSize);
 
 private:
     int nLength, nType;

@@ -54,13 +54,16 @@ void MORPH_PathLengthDist::setupDistribution(double length, double sig_a, double
     setupDistribution();
 }
 
-QVector<double> MORPH_PathLengthDist::getDistribution(int nType, double sigA, double muB, int nLength)
+QVector<double> MORPH_PathLengthDist::getDistribution(int nType, double sigA, double muB, int nLength, double cellSize)
 {
     QVector<double> qvDist;
 
     bool good = true;
     double factor;
     double sum = 0.0;
+
+    sigA /= cellSize;
+    muB /= cellSize;
 
     //exponential
     if (nType == 1)
@@ -109,6 +112,9 @@ void MORPH_PathLengthDist::setupDistribution()
     bool good = true;
     double factor;
     double sum = 0.0;
+
+    sigA /= cellWidth;
+    muB /= cellWidth;
 
     //exponential
     if (nType == 1)

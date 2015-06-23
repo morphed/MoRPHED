@@ -143,20 +143,20 @@ void dialog_morphParams::updatePlots()
 {
     setPathLengthValues();
     x1.clear(), x2.clear(), y1.clear(), y2.clear();
-    int nLength = length1 / nCellWidth;
+    int nLength = length1 / cellWidth;
 
-    y1 = MORPH_PathLengthDist::getDistribution(nType1, sigA1, muB1, nLength);
+    y1 = MORPH_PathLengthDist::getDistribution(nType1, sigA1, muB1, nLength, cellWidth);
     for (int i=0; i<nLength; i++)
     {
-        x1.append((i+1)*nCellWidth);
+        x1.append((i+1)*cellWidth);
     }
 
-    nLength = length2 / nCellWidth;
+    nLength = length2 / cellWidth;
 
-    y2 = MORPH_PathLengthDist::getDistribution(nType2, sigA2, muB2, nLength);
+    y2 = MORPH_PathLengthDist::getDistribution(nType2, sigA2, muB2, nLength, cellWidth);
     for (int i=0; i<nLength; i++)
     {
-        x2.append((i+1)*nCellWidth);
+        x2.append((i+1)*cellWidth);
     }
 
     QPen pen;
@@ -278,7 +278,7 @@ void dialog_morphParams::readXml()
     areaThresh = XmlDoc.readNodeData("MorphedParameters", "BankAreaThresh").toDouble();
     erosionFactor = XmlDoc.readNodeData("MorphedParameters", "ErosionFactor").toDouble();
     grainSize = XmlDoc.readNodeData("MorphedParameters", "GrainSize").toDouble();
-    nCellWidth = XmlDoc.readNodeData("DEMProperties", "CellWidth").toDouble();
+    cellWidth = XmlDoc.readNodeData("DEMProperties", "CellWidth").toDouble();
 
     ui->spinDbl_length1->setValue(length1);
     ui->spinDbl_length2->setValue(length2);
