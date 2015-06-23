@@ -60,54 +60,13 @@ void GUI_MainWindow::setName(QString name)
     this->setWindowTitle(baseName + "    " + name);
 }
 
-void GUI_MainWindow::on_btn_description_clicked()
+void GUI_MainWindow::run(XMLReadWrite XmlGui)
 {
-
-}
-
-void GUI_MainWindow::on_btn_inputs_clicked()
-{
-    dialog_inputs dialog(XmlGui, this);
-    dialog.setModal(true);
-    dialog.exec();
-
-    ui->btn_morphParam->setEnabled(dialog.getCloseOk());
-}
-
-void GUI_MainWindow::on_btn_morphParam_clicked()
-{
-    dialog_morphParams dialog(XmlGui, this);
-    dialog.setModal(true);
-    dialog.exec();
-
-    morphOk = dialog.getCloseOk();
-    checkRun();
-}
-
-void GUI_MainWindow::on_btn_delftParam_clicked()
-{
-    dialog_delftParams dialog(XmlGui, this);
-    dialog.setModal(true);
-    dialog.exec();
-
-    delftOk = dialog.getCloseOk();
-    checkRun();
-}
-
-void GUI_MainWindow::on_btn_outputs_clicked()
-{
-
-}
-
-void GUI_MainWindow::on_btn_run_clicked()
-{
-    disableButtons();
-
     QDateTime start, end, floodStart, floodEnd, delftStart, delftEnd, bankEStart, bankEEnd, bedEStart, bedEEnd;
 
     start = QDateTime::currentDateTime();
 
-    QFileInfo file(filenameXml);
+    QFileInfo file(XmlGui.getDocumentFilename());
 
     MORPH_FileManager fm(file.absolutePath());
 
@@ -126,8 +85,8 @@ void GUI_MainWindow::on_btn_run_clicked()
 
     XmlGui.printXML();
 
-    MORPH_Delft3DIO *delft = new MORPH_Delft3DIO(filenameXml);
-    MORPH_SedimentTransport *trans = new MORPH_SedimentTransport(filenameXml);
+    MORPH_Delft3DIO *delft = new MORPH_Delft3DIO(XmlGui.getDocumentFilename());
+    MORPH_SedimentTransport *trans = new MORPH_SedimentTransport(XmlGui.getDocumentFilename());
     //delft = new MORPH_Delft3DIO(filenameXml);
     //trans = new MORPH_SedimentTransport(filenameXml);
 
@@ -184,6 +143,52 @@ void GUI_MainWindow::on_btn_run_clicked()
 
     delete(delft);
     delete(trans);
+}
+
+void GUI_MainWindow::on_btn_description_clicked()
+{
+
+}
+
+void GUI_MainWindow::on_btn_inputs_clicked()
+{
+    dialog_inputs dialog(XmlGui, this);
+    dialog.setModal(true);
+    dialog.exec();
+
+    ui->btn_morphParam->setEnabled(dialog.getCloseOk());
+}
+
+void GUI_MainWindow::on_btn_morphParam_clicked()
+{
+    dialog_morphParams dialog(XmlGui, this);
+    dialog.setModal(true);
+    dialog.exec();
+
+    morphOk = dialog.getCloseOk();
+    checkRun();
+}
+
+void GUI_MainWindow::on_btn_delftParam_clicked()
+{
+    dialog_delftParams dialog(XmlGui, this);
+    dialog.setModal(true);
+    dialog.exec();
+
+    delftOk = dialog.getCloseOk();
+    checkRun();
+}
+
+void GUI_MainWindow::on_btn_outputs_clicked()
+{
+
+}
+
+void GUI_MainWindow::on_btn_run_clicked()
+{
+    disableButtons();
+
+    run(XmlGui);
 
     enableButtons();
 

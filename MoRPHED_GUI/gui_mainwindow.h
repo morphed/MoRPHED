@@ -29,6 +29,8 @@ public:
     void enableButtons();
     void setName(QString name);
 
+    static void run(XMLReadWrite XmlGui);
+
 private slots:
     void on_btn_description_clicked();
 
