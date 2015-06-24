@@ -408,16 +408,16 @@ void MORPH_Delft3DIO::run()
                 processQp.start(qpName, qpParams);
                 processQp.waitForStarted(-1);
                 processQp.waitForFinished(-1);
-                QThread::currentThread()->sleep(3);
+                QThread::currentThread()->sleep(2);
                 exist1 = xvt.exists(), exist2 = yvt.exists(), exist3 = sst.exists(), exist4 = wdt.exists();
 
                 if (!exist1 || !exist2 || !exist3 || !exist4)
                 {
-                    QThread::currentThread()->sleep(2);
+                    QThread::currentThread()->sleep(1);
                     exist1 = xvt.exists(), exist2 = yvt.exists(), exist3 = sst.exists(), exist4 = wdt.exists();
                     if (!exist1 || !exist2 || !exist3 || !exist4)
                     {
-                        QThread::currentThread()->sleep(2);
+                        QThread::currentThread()->sleep(1);
                     }
                     else
                     {
