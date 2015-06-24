@@ -385,12 +385,14 @@ void MORPH_Delft3DIO::run()
     qDebug()<<"delft done";
     QString qpQuit = "TASKKILL /F /IM d3d_qp.exec";
 
-    QThread::currentThread()->sleep(2);
+    //QThread::currentThread()->sleep(2);
 
     processQp.start(qpName, qpParams);
     processQp.waitForStarted(-1);
+    int qpPid = processQp.processId();
+    qpQuit = "TASKKILL /pid " + QString::number(qpPid);
     processQp.waitForFinished(-1);
-    QThread::currentThread()->sleep(3);
+    QThread::currentThread()->sleep(2);
 
     existData = data.exists();
 
@@ -407,6 +409,7 @@ void MORPH_Delft3DIO::run()
             {
                 processQp.start(qpName, qpParams);
                 processQp.waitForStarted(-1);
+                qpQuit = "TASKKILL /pid " + QString::number(qpPid);
                 processQp.waitForFinished(-1);
                 QThread::currentThread()->sleep(2);
                 exist1 = xvt.exists(), exist2 = yvt.exists(), exist3 = sst.exists(), exist4 = wdt.exists();
@@ -438,6 +441,7 @@ void MORPH_Delft3DIO::run()
                 {
                     processQp.execute(qpQuit);
                 }
+                qDebug()<<"count "<<count;
             }
         }
         else

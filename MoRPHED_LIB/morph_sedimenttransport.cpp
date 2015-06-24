@@ -963,6 +963,8 @@ void MORPH_SedimentTransport::runBankErode()
 
 void MORPH_SedimentTransport::runBedErode()
 {
+    unaccounted = 0.0;
+
     pathLength1.setupDistribution(plDistLength1, sigA1, muB1, nPlDistType1, cellWidth);
 
     //create object for raster operations
