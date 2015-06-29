@@ -1,0 +1,11 @@
+BMI for MoRPHED
+
+Hydrograph - discrete timestep to pull of discharge values for a date.
+	Initialization of multiple path-length distributions with discharge range for each.
+
+Grids
+	Read BMI compliant Grids
+	Output BMI compliant Grids
+	Read and Return elevation from 1D array
+	
+	

@@ -409,6 +409,7 @@ void MORPH_Delft3DIO::run()
             {
                 processQp.start(qpName, qpParams);
                 processQp.waitForStarted(-1);
+                qpPid = processQp.processId();
                 qpQuit = "TASKKILL /pid " + QString::number(qpPid);
                 processQp.waitForFinished(-1);
                 QThread::currentThread()->sleep(2);
@@ -422,14 +423,6 @@ void MORPH_Delft3DIO::run()
                     {
                         QThread::currentThread()->sleep(1);
                     }
-                    else
-                    {
-                        processQp.execute(qpQuit);
-                    }
-                }
-                else
-                {
-                    processQp.execute(qpQuit);
                 }
                 count++;
                 exist1 = xvt.exists(), exist2 = yvt.exists(), exist3 = sst.exists(), exist4 = wdt.exists();
@@ -437,22 +430,18 @@ void MORPH_Delft3DIO::run()
                 {
                     qDebug()<<"ERROR: Hydraulics files do not exist after 500 attempts\n";
                 }
-                else
-                {
-                    processQp.execute(qpQuit);
-                }
                 qDebug()<<"count "<<count;
             }
-        }
-        else
-        {
-            processQp.execute(qpQuit);
         }
     }
     else
     {
         qDebug()<<"Delft3D data file does not exist";
     }
+
+    qpQuit = "TASKKILL /F /IM d3d_qp.exec";
+    QThread::currentThread()->sleep(3);
+    processQp.execute(qpQuit);
 }
 
 void MORPH_Delft3DIO::setDischargePoints()
