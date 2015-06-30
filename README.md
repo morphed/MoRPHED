@@ -1,4 +1,4 @@
-morphed.github.io
+MoRPHED
 =================
 
 The MoRPHED Morphodynamic Model. Some brief notes on building from source are here:
