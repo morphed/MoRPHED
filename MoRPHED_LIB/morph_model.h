@@ -6,7 +6,7 @@
 #include "morph_delft3dio.h"
 #include "morph_filemanager.h"
 
-class MORPH_Model : public QObject
+class MORPHED_LIBSHARED_EXPORT MORPH_Model : public QObject
 {
     Q_OBJECT
 public:
@@ -14,7 +14,9 @@ public:
 
     int init(XMLReadWrite inputXML);
     int run();
+    int writeDisplayData(int nFlood, QVector<double> volumes);
     int writePngOutputs(int nFlood);
+    int writeVolumes(QVector<double> volumes);
 
 private:
     XMLReadWrite m_inXML, m_outXML;

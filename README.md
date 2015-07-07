@@ -6,7 +6,7 @@ For more information view the model website [here](http://morphed.joewheaton.org
 
 ##Notes
 
-1. MoRPHED has been successfully built on Windows 7 and 8. The software is written in Qt, and as such cross-platform building on Linux should also be possible, but may take some effort.
+1. MoRPHED has been successfully built on Windows 7 and 8. The software is written in C++ using Qt libraries, so cross-platform building on Linux should be possible.
 
 2. We build MoRPHED using Qt with the MinGW compiler (g++; Qt 5.3.0, MinGW, 32 bit).
 
@@ -18,15 +18,15 @@ For more information view the model website [here](http://morphed.joewheaton.org
 
 ##Building from source
 
-1. Clone the repository https://github.com/morphed/MoRPHED
+1. Clone the repository https://github.com/morphed/MoRPHED.
 
-2. Update the .pro files for the MORPHED_LIB and MORPHED_GUI projects to point to the location of the GDAL DLL and header files
+2. Update the .pro files for the MORPHED_LIB and MORPHED_GUI projects to point to the location of the GDAL DLL and header files.
 
-3. Make sure the MORPHED_GUI .pro is linked to the MORPHED_LIB project
+3. Make sure the MORPHED_GUI .pro is linked to the MORPHED_LIB project.
 
 ##Known bugs
 
-1. Quickplot, the Delft3D applicatoin for exporting data, often doesn not start when called. Hence, on occassion the necessary hydraulic files are not obtained.
+1. Quickplot, the Delft3D application for exporting data, often doesn not start when called. Hence, on occassion the necessary hydraulic files are not obtained.
 
 ##Developers
 * [Konrad Hafen](https://github.com/khafen74)

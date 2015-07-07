@@ -29,14 +29,23 @@ public:
     void setImportCells(QVector<int> rows, QVector<int> cols);
     void sloughBanks();
     void transportSediment();
+    QVector<double> getMechanismVolumes();
 
 private:
     double exported,
             unaccounted,
-            counterDepoEvent,
-            counterDepoTotal,
-            counterErodEvent,
-            counterErodTotal,
+            counterBankDepoEvent,
+            counterBankDepoTotal,
+            counterBankErodEvent,
+            counterBankErodTotal,
+            counterBedDepoEvent,
+            counterBedDepoTotal,
+            counterBedErodEvent,
+            counterBedErodTotal,
+            counterImportEvent,
+            counterImportTotal,
+            counterExportEvent,
+            counterExportTotal,
             maxSlope;
 
     QString qsXvelPath,

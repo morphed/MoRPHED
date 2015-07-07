@@ -18,7 +18,9 @@ int MORPH_Model::init(XMLReadWrite inputXML)
 
     m_FileManager = MORPH_FileManager(fi.absolutePath());
 
-    QString path, dir;
+    QString path, dir, dirName;
+    QDir baseDir(m_inXML.readNodeData("ProjectDirectory"));
+    dirName = baseDir.dirName();
     dir = m_inXML.readNodeData("ProjectDirectory") + "/Inputs/01_InitialInputs";
     path = m_inXML.readNodeData("OriginalDEMPath");
 
@@ -32,6 +34,11 @@ int MORPH_Model::init(XMLReadWrite inputXML)
 
     m_inXML.printXML();
 
+    m_outXML.writeXMLdocViewer();
+    m_outXML.setDocumentFilename(m_inXML.readNodeData("ProjectDirectory") + "/" + dirName + ".display.morph");
+    qDebug()<<(m_inXML.readNodeData("ProjectDirectory") + "/" + dirName + ".display.morph");
+    m_outXML.printXML();
+
     return PROCESS_OK;
 }
 
@@ -39,6 +46,8 @@ int MORPH_Model::run()
 {
     MORPH_Delft3DIO *delft = new MORPH_Delft3DIO(m_inXML.getDocumentFilename());
     MORPH_SedimentTransport *trans = new MORPH_SedimentTransport(m_inXML.getDocumentFilename());
+
+    QVector<double> volumes;
 
 
     for (int i=0; i<trans->getIterations(); i++)
@@ -71,10 +80,17 @@ int MORPH_Model::run()
         qDebug()<<"importing";
         trans->importSediment();
         qDebug()<<"flood done "<<i;
+        volumes = trans->getMechanismVolumes();
+        writeDisplayData(trans->getCurrentIteration(), volumes);
     }
 
     delete(delft);
     delete(trans);
 
     return PROCESS_OK;
+}
+
+int MORPH_Model::writeDisplayData(int nFlood, QVector<double> volumes)
+{
+    m_outXML.writeEvent(nFlood+1);
 }

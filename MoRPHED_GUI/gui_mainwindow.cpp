@@ -57,7 +57,7 @@ void GUI_MainWindow::enableButtons()
 
 void GUI_MainWindow::setName(QString name)
 {
-    this->setWindowTitle(baseName + "    " + name);
+    this->setWindowTitle(name + " - " + baseName);
 }
 
 void GUI_MainWindow::run(XMLReadWrite XmlGui)
@@ -190,7 +190,8 @@ void GUI_MainWindow::on_btn_run_clicked()
 
     try
     {
-        run(XmlGui);
+        MORPH_Model model(XmlGui);
+        model.run();
     }
     catch(MORPH_Exception &e)
     {

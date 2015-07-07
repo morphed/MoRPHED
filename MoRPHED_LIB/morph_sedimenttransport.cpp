@@ -5,10 +5,18 @@ MORPH_SedimentTransport::MORPH_SedimentTransport(QString xmlPath) : MORPH_Base(x
     pathLength1.setupDistribution(plDistLength1, sigA1, muB1, nPlDistType1, cellWidth);
     exported = 0.0;
     unaccounted = 0.0;
-    counterDepoTotal = 0.0;
-    counterErodTotal = 0.0;
-    counterDepoEvent = 0.0;
-    counterErodEvent = 0.0;
+    counterBankDepoEvent = 0.0;
+    counterBankDepoTotal = 0.0;
+    counterBankErodEvent = 0.0;
+    counterBankErodTotal = 0.0;
+    counterBedDepoEvent = 0.0;
+    counterBedDepoTotal = 0.0;
+    counterBedErodEvent = 0.0;
+    counterBedErodTotal = 0.0;
+    counterImportEvent = 0.0;
+    counterImportTotal = 0.0;
+    counterExportEvent = 0.0;
+    counterExportTotal = 0.0;
 
     MORPH_Raster Raster;
     QString path = qsTempPath + "/slope_init.tif";
@@ -30,8 +38,8 @@ void MORPH_SedimentTransport::addDeposition()
             pDepositRaster->GetRasterBand(1)->RasterIO(GF_Read, qvDepoCol[i], qvDepoRow[i], 1, 1, oldVal, 1, 1, GDT_Float32, 0, 0);
 
             *newVal = *oldVal + qvDepoAmt[i];
-            counterDepoEvent += qvDepoAmt[i];
-            counterDepoTotal += qvDepoAmt[i];
+//            counterDepoEvent += qvDepoAmt[i];
+//            counterDepoTotal += qvDepoAmt[i];
 
             pDepositRaster->GetRasterBand(1)->RasterIO(GF_Write, qvDepoCol[i], qvDepoRow[i], 1, 1, newVal, 1, 1, GDT_Float32, 0, 0);
         }
@@ -1087,8 +1095,8 @@ void MORPH_SedimentTransport::runBedErode()
     clearDeposition();
 
     qDebug()<<"FINAL exported "<<exported;
-    qDebug()<<"deposition "<<counterDepoEvent<< counterDepoTotal;
-    qDebug()<<"erosion "<<counterErodEvent<< counterErodTotal;
+    //qDebug()<<"deposition "<<counterDepoEvent<< counterDepoTotal;
+    //qDebug()<<"erosion "<<counterErodEvent<< counterErodTotal;
 }
 
 void MORPH_SedimentTransport::setImportCells(QVector<int> rows, QVector<int> cols)
@@ -1241,6 +1249,23 @@ void MORPH_SedimentTransport::transportSediment()
     Raster.add(qsNewDemPath.toStdString().c_str(), qsDepoPath.toStdString().c_str());
 }
 
+QVector<double> MORPH_SedimentTransport::getMechanismVolumes()
+{
+    QVector<double> volumes;
+    volumes.append(counterExportEvent);
+    volumes.append(counterExportTotal);
+    volumes.append(counterImportEvent);
+    volumes.append(counterImportTotal);
+    volumes.append(counterBedErodEvent);
+    volumes.append(counterBedErodTotal);
+    volumes.append(counterBedDepoEvent);
+    volumes.append(counterBedDepoTotal);
+    volumes.append(counterBankErodEvent);
+    volumes.append(counterBankErodTotal);
+    volumes.append(counterBankDepoEvent);
+    volumes.append(counterBankDepoTotal);
+}
+
 double MORPH_SedimentTransport::averageShear_FlowLine(int row, int col, int cellsUS, int cellsDS)
 {
     //declare varibles to hold location data
@@ -1358,6 +1383,17 @@ void MORPH_SedimentTransport::createDoD()
     Raster.add(dodPath.toStdString().c_str(), importDepo.toStdString().c_str());
 
     fixDeposition(dodPath);
+
+    counterBankDepoEvent = Raster.sum(bankDepo.toStdString().c_str());
+    counterBedDepoEvent = Raster.sum(bedDepo.toStdString().c_str());
+    counterBankErodEvent = Raster.sum(bankErode.toStdString().c_str());
+    counterBedErodEvent = Raster.sum(bedErode.toStdString().c_str());
+    counterImportEvent = Raster.sum(importDepo.toStdString().c_str());
+    counterBankDepoTotal += counterBankDepoEvent;
+    counterBedDepoTotal += counterBedDepoTotal;
+    counterBankErodTotal += counterBankErodEvent;
+    counterBedErodTotal += counterBedErodEvent;
+    counterImportTotal += counterImportEvent;
 }
 
 double MORPH_SedimentTransport::erodeBedFlow(double shearCrit, double shear, int row, int col)
@@ -1496,6 +1532,8 @@ void MORPH_SedimentTransport::findImportCells()
         imported = exported * import[nCurrentIteration];
     }
 
+    counterExportEvent = exported;
+    counterExportTotal += counterExportEvent;
     exported = 0.0;
 
     if (nDirUSbound == 1)

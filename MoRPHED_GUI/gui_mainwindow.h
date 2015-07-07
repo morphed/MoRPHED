@@ -10,6 +10,7 @@
 #include "dialog_delftparams.h"
 #include "morph_delft3dio.h"
 #include "morph_sedimenttransport.h"
+#include "morph_model.h"
 
 namespace Ui {
 class GUI_MainWindow;

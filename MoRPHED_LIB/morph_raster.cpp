@@ -981,7 +981,7 @@ double MORPH_Raster::sum()
 
     pRaster = (GDALDataset*) GDALOpen(m_rasterPath, GA_ReadOnly);
 
-    double sum = 0.0;
+    double dSum = 0.0;
 
     float *row = (float*) CPLMalloc(sizeof(float)*nCols);
 
@@ -991,9 +991,9 @@ double MORPH_Raster::sum()
 
         for (int j=0; j<nCols; j++)
         {
-            if (row[i] != noData)
+            if (row[j] != noData)
             {
-                sum += row[i];
+                dSum += row[j];
             }
         }
     }
@@ -1002,14 +1002,17 @@ double MORPH_Raster::sum()
 
     CPLFree(row);
 
-    return sum;
+    return dSum;
 }
 
 double MORPH_Raster::sum(const char *rasterPath)
 {
     setProperties(rasterPath);
 
-    return(sum());
+    double dSum = 0.0;
+    dSum = sum();
+
+    return dSum;
 }
 
 void MORPH_Raster::zeroToNoData(const char *sourcePath, double noDataValue)
