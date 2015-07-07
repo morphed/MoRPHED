@@ -2,7 +2,7 @@ MoRPHED
 =================
 
 The MoRPHED Morphodynamic Model.
-For more information view the model website [here](http://morphed.joewheaton.org/)
+For more information view the model website [here](http://morphed.joewheaton.org/).
 
 ##Notes
 
