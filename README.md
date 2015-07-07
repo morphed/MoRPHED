@@ -12,3 +12,7 @@ The MoRPHED Morphodynamic Model. Some brief notes on building from source are he
 4. To build MoRPHED, select 'Release' mode and build "MORPHED_GUI". Once built, put a copy of libgdal-1.dll (obtained in Step 3) in MORPHED_GUTS/release.
 
 5. MoRPHED integrates with the freely-available Delft3D hydaulic model, which must be built by following the instructions at http://oss.deltares.nl/web/delft3d. When prompted in MoRPHED, provide the top-level directory of Delft (e.g. C:/delft3d).
+
+#Contributors
+[Konrad Hafen](https://github.com/khafen74)
+Alan Kasprak
