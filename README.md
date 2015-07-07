@@ -15,4 +15,4 @@ The MoRPHED Morphodynamic Model. Some brief notes on building from source are he
 
 #Contributors
 [Konrad Hafen](https://github.com/khafen74)
-Alan Kasprak
+[Alan Kasprak](www.alankasprak.org)
