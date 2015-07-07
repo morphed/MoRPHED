@@ -16,6 +16,18 @@ For more information view the model website [here](http://morphed.joewheaton.org
 
 5. MoRPHED integrates with the freely-available Delft3D hydaulic model, which must be built by following the instructions at http://oss.deltares.nl/web/delft3d. When prompted in MoRPHED, provide the top-level directory of Delft (e.g. C:/delft3d).
 
+##Building from source
+
+1. Clone the repository https://github.com/morphed/MoRPHED
+
+2. Update the .pro files for the MORPHED_LIB and MORPHED_GUI projects to point to the location of the GDAL DLL and header files
+
+3. Make sure the MORPHED_GUI .pro is linked to the MORPHED_LIB project
+
+##Known bugs
+
+1. Quickplot, the Delft3D applicatoin for exporting data, often doesn not start when called. Hence, on occassion the necessary hydraulic files are not obtained.
+
 ##Developers
 * [Konrad Hafen](https://github.com/khafen74)
 * [Alan Kasprak](http://www.alankasprak.org)
