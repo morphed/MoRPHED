@@ -265,7 +265,7 @@
       <item>
        <widget class="QDoubleSpinBox" name="spinDbl_slp">
         <property name="maximum">
-         <double>90.000000000000000</double>
+         <double>91.000000000000000</double>
         </property>
        </widget>
       </item>
@@ -311,7 +311,7 @@
          </size>
         </property>
         <property name="maximum">
-         <double>999.990000000000009</double>
+         <double>9999.989999999999782</double>
         </property>
        </widget>
       </item>

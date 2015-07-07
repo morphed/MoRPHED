@@ -736,6 +736,7 @@ void MORPH_SedimentTransport::importSediment()
     pathLength1.setupDistribution(plDistLength2, sigA2, muB2, nPlDistType2, cellWidth);
 
     findImportCells();
+    qDebug()<<"find import done";
 
     QString path1 = qsOutputPath + "/" + qsFloodName + "/GTIFF/ImportDepo" + QString::number(nCurrentIteration+1) + ".tif";
     QFile file(path1);
@@ -744,6 +745,7 @@ void MORPH_SedimentTransport::importSediment()
         file.remove();
     }
     QFile::copy(qsDepoPath, path1);
+    qDebug()<<"import depo copied";
 
     MORPH_Raster Raster;
 
@@ -751,6 +753,7 @@ void MORPH_SedimentTransport::importSediment()
 
     loadDrivers();
     createDoD();
+    qDebug()<<"dod created and fixed";
     path1 = qsOutputPath + "/" + qsFloodName + "/GTIFF/DoD_" + QString::number(nCurrentIteration+1) + "_temp.tif";
 
     Raster.add(qsNewDemPath.toStdString().c_str(), path1.toStdString().c_str());

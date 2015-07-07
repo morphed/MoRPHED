@@ -188,7 +188,18 @@ void GUI_MainWindow::on_btn_run_clicked()
 {
     disableButtons();
 
-    run(XmlGui);
+    try
+    {
+        run(XmlGui);
+    }
+    catch(MORPH_Exception &e)
+    {
+        QMessageBox::information(this, "Error", e.getErrorMsgString());
+    }
+//    catch(std::exception &e)
+//    {
+//        std::cerr << "Error: "<<e.what() << std::endl;
+//    }
 
     enableButtons();
 

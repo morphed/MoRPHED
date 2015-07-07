@@ -299,7 +299,7 @@ void XMLReadWrite::writeXMLdocGUI()
 
 }
 
-void XMLReadWrite::writeXMLdocViewer(int floodNum)
+void XMLReadWrite::writeXMLdocViewer()
 {
     doc = QDomDocument("MORPHED_ViewerData");
     root = doc.createElement("MORPHED_Outputs");
@@ -308,42 +308,43 @@ void XMLReadWrite::writeXMLdocViewer(int floodNum)
     createNewElement("InputHydroSedi");
     createNewElement("InitialDEM");
     createNewElement("InitialHillshade");
-    createNewElement("Floods");
-    writeNodeData("Floods", QString::number(floodNum));
+    createNewElement("Events");
+    writeNodeData("Events", "0");
 
+}
+
+void XMLReadWrite::writeEvent(int nCurrentFlood)
+{
     QString floodName;
-
-    for (int i=0; i<floodNum; i++)
-    {
-        floodName = "Flood"+QString::number(i+1);
-        createNewElement(floodName);
-        createNewElement(floodName,"FloodID");
-        writeNodeData(floodName,"FloodID",QString::number(i+1));
-        createNewElement(floodName, "Date");
-        createNewElement(floodName, "Discharge");
-        createNewElement(floodName,"DEMPath");
-        createNewElement(floodName,"DoDRecentPath");
-        createNewElement(floodName,"DoDCumulativePath");
-        createNewElement(floodName,"HillshadePath");
-        createNewElement(floodName,"WaterDepthPath");
-        createNewElement(floodName,"ExportedSediment");
-        createNewElement(floodName,"ExportedSediment","Event");
-        createNewElement(floodName,"ExportedSediment","Total");
-        createNewElement(floodName,"ImportedSediment");
-        createNewElement(floodName,"ImportedSediment","Event");
-        createNewElement(floodName,"ImportedSediment","Total");
-        createNewElement(floodName,"BedErosion");
-        createNewElement(floodName,"BedErosion","Event");
-        createNewElement(floodName,"BedErosion","Total");
-        createNewElement(floodName,"BedDeposition");
-        createNewElement(floodName,"BedDeposition","Event");
-        createNewElement(floodName,"BedDeposition","Total");
-        createNewElement(floodName,"SloughErosion");
-        createNewElement(floodName,"SloughErosion","Event");
-        createNewElement(floodName,"SloughErosion","Total");
-        createNewElement(floodName,"SloughDeposition");
-        createNewElement(floodName,"SloughDeposition","Event");
-        createNewElement(floodName,"SloughDeposition","Total");
-    }
+    writeNodeData("Events", QString::number(nCurrentFlood + 1));
+    floodName = "Event"+QString::number(nCurrentFlood+1);
+    createNewElement(floodName);
+    createNewElement(floodName,"EventID");
+    writeNodeData(floodName,"EventID",QString::number(nCurrentFlood+1));
+    createNewElement(floodName, "Date");
+    createNewElement(floodName, "Discharge");
+    createNewElement(floodName,"DEMPath");
+    createNewElement(floodName,"DoDRecentPath");
+    createNewElement(floodName,"DoDCumulativePath");
+    createNewElement(floodName,"HillshadePath");
+    createNewElement(floodName,"WaterDepthPath");
+    createNewElement(floodName,"ExportedSediment");
+    createNewElement(floodName,"ExportedSediment","Event");
+    createNewElement(floodName,"ExportedSediment","Total");
+    createNewElement(floodName,"ImportedSediment");
+    createNewElement(floodName,"ImportedSediment","Event");
+    createNewElement(floodName,"ImportedSediment","Total");
+    createNewElement(floodName,"BedErosion");
+    createNewElement(floodName,"BedErosion","Event");
+    createNewElement(floodName,"BedErosion","Total");
+    createNewElement(floodName,"BedDeposition");
+    createNewElement(floodName,"BedDeposition","Event");
+    createNewElement(floodName,"BedDeposition","Total");
+    createNewElement(floodName,"BankErosion");
+    createNewElement(floodName,"BankErosion","Event");
+    createNewElement(floodName,"BankErosion","Total");
+    createNewElement(floodName,"BankDeposition");
+    createNewElement(floodName,"BankDeposition","Event");
+    createNewElement(floodName,"BankDeposition","Total");
 }
 

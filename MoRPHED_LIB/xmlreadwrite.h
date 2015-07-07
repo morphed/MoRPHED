@@ -35,7 +35,8 @@ public:
     void writeRasterProperties(QString rasterPath);
     void writeRasterProperties(const char *rasterPath);
     void writeXMLdocGUI();
-    void writeXMLdocViewer(int floodNum);
+    void writeXMLdocViewer();
+    void writeEvent(int nCurrentFlood);
 };
 
 #endif // XMLREADWRITE_H

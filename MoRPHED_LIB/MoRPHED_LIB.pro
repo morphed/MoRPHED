@@ -29,7 +29,9 @@ SOURCES += morphed_lib.cpp \
     renderer_stretchminmax.cpp \
     renderer_stretchstddev.cpp \
     morph_filemanager.cpp \
-    morph_sedimenttransport.cpp
+    morph_sedimenttransport.cpp \
+    morph_exception.cpp \
+    morph_model.cpp
 
 HEADERS += morphed_lib.h\
         morphed_lib_global.h \
@@ -48,7 +50,9 @@ HEADERS += morphed_lib.h\
     renderer_stretchminmax.h \
     renderer_stretchstddev.h \
     morph_filemanager.h \
-    morph_sedimenttransport.h
+    morph_sedimenttransport.h \
+    morph_exception.h \
+    morph_model.h
 
 unix {
     target.path = /usr/lib

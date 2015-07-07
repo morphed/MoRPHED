@@ -405,7 +405,7 @@ void MORPH_Delft3DIO::run()
         {
             count = 0;
 
-            while ((!exist1 || !exist2 || !exist3 || !exist4) && count < 500)
+            while ((!exist1 || !exist2 || !exist3 || !exist4) && count < 1000)
             {
                 processQp.start(qpName, qpParams);
                 processQp.waitForStarted(-1);
@@ -426,9 +426,9 @@ void MORPH_Delft3DIO::run()
                 }
                 count++;
                 exist1 = xvt.exists(), exist2 = yvt.exists(), exist3 = sst.exists(), exist4 = wdt.exists();
-                if ((!exist1 || !exist2 || !exist3 || !exist4) && count == 499)
+                if ((!exist1 || !exist2 || !exist3 || !exist4) && count == 999)
                 {
-                    qDebug()<<"ERROR: Hydraulics files do not exist after 500 attempts\n";
+                    throw MORPH_Exception(QUICKPLOT_ERROR, "hydraulics files do not exist after 1000 attempts");
                 }
                 qDebug()<<"count "<<count;
             }

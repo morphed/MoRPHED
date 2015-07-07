@@ -5,6 +5,7 @@
 #include "xmlreadwrite.h"
 #include "morph_raster.h"
 #include "morph_filemanager.h"
+#include "morph_exception.h"
 
 class MORPHED_LIBSHARED_EXPORT MORPH_Base : QObject
 {
