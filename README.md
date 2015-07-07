@@ -1,7 +1,9 @@
 MoRPHED
 =================
 
-The MoRPHED Morphodynamic Model. Some brief notes on building from source are here:
+The MoRPHED Morphodynamic Model.
+
+#Notes
 
 1. MoRPHED has been successfully built on Windows 7 and 8. The software is written in Qt, and as such cross-platform building on Linux should also be possible, but may take some effort.
 
@@ -13,6 +15,6 @@ The MoRPHED Morphodynamic Model. Some brief notes on building from source are he
 
 5. MoRPHED integrates with the freely-available Delft3D hydaulic model, which must be built by following the instructions at http://oss.deltares.nl/web/delft3d. When prompted in MoRPHED, provide the top-level directory of Delft (e.g. C:/delft3d).
 
-#Contributors
-[Konrad Hafen](https://github.com/khafen74)
-[Alan Kasprak](www.alankasprak.org)
+#Developers
+* [Konrad Hafen](https://github.com/khafen74)
+* [Alan Kasprak](http://www.alankasprak.org)
