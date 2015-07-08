@@ -316,11 +316,11 @@ void XMLReadWrite::writeXMLdocViewer()
 void XMLReadWrite::writeEvent(int nCurrentFlood)
 {
     QString floodName;
-    writeNodeData("Events", QString::number(nCurrentFlood + 1));
-    floodName = "Event"+QString::number(nCurrentFlood+1);
+    writeNodeData("Events", QString::number(nCurrentFlood));
+    floodName = "Event"+QString::number(nCurrentFlood);
     createNewElement(floodName);
     createNewElement(floodName,"EventID");
-    writeNodeData(floodName,"EventID",QString::number(nCurrentFlood+1));
+    writeNodeData(floodName,"EventID",QString::number(nCurrentFlood));
     createNewElement(floodName, "Date");
     createNewElement(floodName, "Discharge");
     createNewElement(floodName,"DEMPath");

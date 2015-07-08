@@ -1264,6 +1264,8 @@ QVector<double> MORPH_SedimentTransport::getMechanismVolumes()
     volumes.append(counterBankErodTotal);
     volumes.append(counterBankDepoEvent);
     volumes.append(counterBankDepoTotal);
+
+    return volumes;
 }
 
 double MORPH_SedimentTransport::averageShear_FlowLine(int row, int col, int cellsUS, int cellsDS)
@@ -1365,7 +1367,7 @@ void MORPH_SedimentTransport::createDoD()
     bedErode = qsOutputPath + "/" + qsFloodName + "/GTIFF/BedErosion" + QString::number(nCurrentIteration+1) + ".tif";
     bankDepo = qsOutputPath + "/" + qsFloodName + "/GTIFF/BankDeposition" + QString::number(nCurrentIteration+1) + ".tif";
     bedDepo = qsOutputPath + "/" + qsFloodName + "/GTIFF/BedDeposition" + QString::number(nCurrentIteration+1) + ".tif";
-    dodPath = qsOutputPath + "/" + qsFloodName + "/GTIFF/DoD_" + QString::number(nCurrentIteration+1) + "_temp.tif";
+    dodPath = qsOutputPath + "/" + qsFloodName + "/GTIFF/DoD_" + QString::number(nCurrentIteration+1) + ".tif";
     importDepo = qsOutputPath + "/" + qsFloodName + "/GTIFF/ImportDepo" + QString::number(nCurrentIteration+1) + ".tif";
 
     pDemOfDiff = pDriverTIFF->Create(dodPath.toStdString().c_str(), nCols, nRows, 1, GDT_Float32, NULL);

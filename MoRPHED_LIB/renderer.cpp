@@ -30,7 +30,7 @@ Renderer::~Renderer()
 
 void Renderer::printLegend()
 {
-    setLegendPath();
+    //setLegendPath();
     createLegend();
 }
 
@@ -43,6 +43,7 @@ void Renderer::printLegend(const char *path)
 int Renderer::rasterToPNG(const char *pngPath, int nQuality, int nLength)
 {
     pngOutPath = pngPath;
+    setLegendPath();
 
     setup();
 

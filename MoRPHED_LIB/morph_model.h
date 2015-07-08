@@ -5,6 +5,9 @@
 #include "morph_sedimenttransport.h"
 #include "morph_delft3dio.h"
 #include "morph_filemanager.h"
+#include "renderer_bytedata.h"
+#include "renderer_classified.h"
+#include "renderer_stretchminmax.h"
 
 class MORPHED_LIBSHARED_EXPORT MORPH_Model : public QObject
 {
@@ -15,8 +18,8 @@ public:
     int init(XMLReadWrite inputXML);
     int run();
     int writeDisplayData(int nFlood, QVector<double> volumes);
-    int writePngOutputs(int nFlood);
-    int writeVolumes(QVector<double> volumes);
+    int writePngOutputs(QString eventName, int nFlood);
+    int writeVolumes(QString eventName, QVector<double> volumes);
 
 private:
     XMLReadWrite m_inXML, m_outXML;
