@@ -621,12 +621,14 @@ void MORPH_Raster::hillshade(const char *hlsdPath)
     azimuthRad = azimuthMath * PI / 180.0;
 
     float *elevWin = (float*) CPLMalloc(sizeof(float)*9);
-    float *hlsdRow = (float*) CPLMalloc(sizeof(float)*nCols);
+    unsigned char *hlsdRow = (unsigned char*) CPLMalloc(sizeof(int)*nCols);
 
     bool calculate;
 
     for (int i=1; i<nRows-1; i++)
     {
+        hlsdRow[0] = 0, hlsdRow[nCols-1] = 0;
+
         for (int j=1; j<nCols-1; j++)
         {
             pSourceDS->GetRasterBand(1)->RasterIO(GF_Read, j-1, i-1, 3, 3, elevWin, 3, 3, GDT_Float32, 0, 0);
@@ -637,9 +639,7 @@ void MORPH_Raster::hillshade(const char *hlsdPath)
             {
                 if (elevWin[k] == noData)
                 {
-                    hlsdRow[j] = 0;
                     calculate = false;
-                    break;
                 }
             }
 
@@ -677,6 +677,10 @@ void MORPH_Raster::hillshade(const char *hlsdPath)
                 hlsdByte = round(254 * ((cos(zenRad) * cos(slopeRad)) + (sin(zenRad) * sin(slopeRad) * cos(azimuthRad - aspectRad)))) + 1.0;
                 hlsdRow[j] = hlsdByte;
 
+            }
+            else
+            {
+                hlsdRow[j] = 0;
             }
         }
 

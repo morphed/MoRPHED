@@ -57,7 +57,7 @@ int MORPH_Model::run()
         {
             m_FileManager.createFloodDirectories(i);
             qDebug()<<"running delft";
-            delft->run();
+            //delft->run();
             qDebug()<<"delft done, load rasters";
             trans->loadRasters();
             qDebug()<<"rasters loaded";
@@ -71,7 +71,7 @@ int MORPH_Model::run()
         trans->runBankErode();
 
         qDebug()<<"running delft "<<i;
-        delft->run();
+        //delft->run();
         qDebug()<<"done running delft "<<i;
 
         trans->loadRasters();
@@ -114,17 +114,25 @@ int MORPH_Model::writePngOutputs(QString eventName, int nFlood)
     //Setup file names for PNG outputs
     QString floodName = m_FileManager.getFloodName(nFlood);
     qDebug()<<floodName;
-    QString baseDir, demPath, depthPath, dodPath, hlsdPng, depthPng, dodPng;
+    QString baseDir, demPath, depthPath, dodPath, hlsdPath, hlsdPng, depthPng, dodPng;
     baseDir = m_inXML.readNodeData("ProjectDirectory");
     demPath = baseDir + "/Outputs/" + floodName + "/GTIFF/DEM_" + QString::number(nFlood) + ".tif";
+    hlsdPath = baseDir + "/Outputs/" + floodName + "/GTIFF/hlsd_" + QString::number(nFlood) + ".tif";
     depthPath = baseDir + "/Outputs/" + floodName + "/GTIFF/Depth" + QString::number(nFlood) + ".tif";
     dodPath = baseDir + "/Outputs/" + floodName + "/GTIFF/DoD_" + QString::number(nFlood) + ".tif";
-    hlsdPng = baseDir + "/Outputs/" + floodName + "/PNG/hlsd" + QString::number(nFlood) + ".tif";
-    depthPng = baseDir + "/Outputs/" + floodName + "/PNG/depth" + QString::number(nFlood) + ".tif";
-    dodPng = baseDir + "/Outputs/" + floodName + "/PNG/dod" + QString::number(nFlood) + ".tif";
+    hlsdPng = baseDir + "/Outputs/" + floodName + "/PNG/hlsd" + QString::number(nFlood) + ".png";
+    depthPng = baseDir + "/Outputs/" + floodName + "/PNG/depth" + QString::number(nFlood) + ".png";
+    dodPng = baseDir + "/Outputs/" + floodName + "/PNG/dod" + QString::number(nFlood) + ".png";
+
+    //Create hillshade raster
+    qDebug()<<"writing hillshade";
+    MORPH_Raster raster;
+    raster.hillshade(demPath.toStdString().c_str(), hlsdPath.toStdString().c_str());
+    qDebug()<<"hlsd done";
 
     //Create PNG images from raster layers
-    //Renderer_ByteData hlsdRender;
+    Renderer_ByteData hlsdRender(hlsdPath.toStdString().c_str());
+    hlsdRender.rasterToPNG(hlsdPng.toStdString().c_str(), 100, 1000);
     Renderer_StretchMinMax depthRender(depthPath.toStdString().c_str(), CR_LtBlueDkBlue, 120, false, true);
     depthRender.rasterToPNG(depthPng.toStdString().c_str(), 100, 1000);
     depthRender.printLegend();
