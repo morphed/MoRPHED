@@ -46,6 +46,7 @@ int MORPH_Model::run()
 {
     MORPH_Delft3DIO *delft = new MORPH_Delft3DIO(m_inXML.getDocumentFilename());
     MORPH_SedimentTransport *trans = new MORPH_SedimentTransport(m_inXML.getDocumentFilename());
+    m_outXML.writeNodeData("USBound", QString::number(trans->getUsBoundary()));
 
     QVector<double> volumes;
 
@@ -96,13 +97,10 @@ int MORPH_Model::writeDisplayData(int nFlood, QVector<double> volumes)
 {
     nFlood = nFlood+1;
     QString eventName = "Event" + QString::number(nFlood);
-    qDebug()<<eventName;
     m_outXML.writeEvent(nFlood);
-    m_outXML.printXML();
-    qDebug()<<"xml outline written";
+    m_outXML.printXML();;
 
     writeVolumes(eventName, volumes);
-    qDebug()<<"volumes written";
     GDALAllRegister();
     writePngOutputs(eventName, nFlood);
 

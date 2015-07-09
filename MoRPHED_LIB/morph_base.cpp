@@ -22,6 +22,11 @@ int MORPH_Base::getIterations()
     return nIterations;
 }
 
+int MORPH_Base::getUsBoundary()
+{
+    return nDirUSbound;
+}
+
 void MORPH_Base::setCurrentIteration(int iter)
 {
     nCurrentIteration = iter;

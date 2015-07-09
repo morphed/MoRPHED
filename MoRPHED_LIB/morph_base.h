@@ -15,6 +15,7 @@ public:
 
     int getCurrentIteration();
     int getIterations();
+    int getUsBoundary();
     void setCurrentIteration(int iter);
 
     static double findMaxVector(QVector<double> vector);
