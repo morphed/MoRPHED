@@ -1393,7 +1393,7 @@ void MORPH_SedimentTransport::createDoD()
     counterImportEvent = Raster.sum(importDepo.toStdString().c_str());
     counterBankDepoTotal += counterBankDepoEvent;
     counterBedDepoTotal += counterBedDepoEvent;
-    counterBankErodTotal += counterBankErodEvent;
+    counterBankErodTotal += fabs(counterBankErodEvent);
     counterBedErodTotal += counterBedErodEvent;
     counterImportTotal += counterImportEvent;
 }
