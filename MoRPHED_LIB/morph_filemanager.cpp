@@ -10,6 +10,18 @@ MORPH_FileManager::MORPH_FileManager(QString rootDir)
     setDirectories();
 }
 
+void MORPH_FileManager::copyFinalOutputs(int flood)
+{
+    QString floodName = getFloodName(flood);
+    QString demPath = outputDirPath + "/" + floodName + "/GTIFF/DEM_" + QString::number(flood) + ".tif";
+    QString depthPath = outputDirPath + "/" + floodName + "/GTIFF/Depth" + QString::number(flood) + ".tif";
+    QString newDemPath = outputDirPath + "/01_FinalOutputs/dem.tif";
+    QString newDepthPath = outputDirPath + "/01_FinalOutputs/depth.tif";
+
+    QFile::copy(demPath, newDemPath);
+    QFile::copy(depthPath, newDepthPath);
+}
+
 void MORPH_FileManager::createDirectory(QString dirName)
 {
 

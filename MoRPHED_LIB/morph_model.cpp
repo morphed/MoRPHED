@@ -90,6 +90,8 @@ int MORPH_Model::run()
         m_outXML.printXML();
     }
 
+    m_FileManager.copyFinalOutputs(trans->getIterations());
+
     delete(delft);
     delete(trans);
 

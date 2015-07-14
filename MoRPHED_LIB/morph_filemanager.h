@@ -9,6 +9,7 @@ public:
     MORPH_FileManager();
     MORPH_FileManager(QString rootDir);
 
+    void copyFinalOutputs(int flood);
     void createDirectory(QString dirName);
     void createFloodDirectories(int flood);
     void setRootDir(QString rootDir);
