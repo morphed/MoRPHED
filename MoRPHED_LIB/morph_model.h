@@ -18,6 +18,7 @@ public:
     int init(XMLReadWrite inputXML);
     int run();
     int writeDisplayData(int nFlood, QVector<double> volumes);
+    int writeInitialData(int nFlood);
     int writePngOutputs(QString eventName, int nFlood);
     int writeVolumes(QString eventName, QVector<double> volumes);
 

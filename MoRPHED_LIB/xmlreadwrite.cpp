@@ -308,6 +308,7 @@ void XMLReadWrite::writeXMLdocViewer()
     createNewElement("InputHydroSedi");
     createNewElement("InitialDEM");
     createNewElement("InitialHillshade");
+    createNewElement("InitialDepth");
     createNewElement("USBound");
     createNewElement("DSBound");
     createNewElement("Events");

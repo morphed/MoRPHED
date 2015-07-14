@@ -897,13 +897,13 @@ void MORPH_Raster::subtract(const char *subtractPath)
 
         for (int j=0; j<nCols; j++)
         {
-            if (srcRow[j] == noData)
+            if (srcRow[j] == noData || subRow[j] == noData)
             {
                 newRow[j] = noData;
             }
             else if (subRow[j] == noData)
             {
-                newRow[j] = srcRow[j];
+                newRow[j] = noData;
             }
             else
             {
@@ -959,7 +959,7 @@ void MORPH_Raster::subtract(const char *sourcePath, const char *subtractPath, co
             }
             else if (subRow[j] == noData)
             {
-                newRow[j] = srcRow[j];
+                newRow[j] = noData;
             }
             else
             {
