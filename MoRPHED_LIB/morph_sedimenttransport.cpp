@@ -762,7 +762,7 @@ void MORPH_SedimentTransport::importSediment()
     loadDrivers();
     createDoD();
     qDebug()<<"dod created and fixed";
-    path1 = qsOutputPath + "/" + qsFloodName + "/GTIFF/DoD_" + QString::number(nCurrentIteration+1) + "_temp.tif";
+    path1 = qsOutputPath + "/" + qsFloodName + "/GTIFF/DoD_" + QString::number(nCurrentIteration+1) + ".tif";
 
     Raster.add(qsNewDemPath.toStdString().c_str(), path1.toStdString().c_str());
 
