@@ -21,28 +21,29 @@ From the file menu either start a new project or open an existing project. To st
 
 Click the Inputs button, this will open a new dialog. 
 
-Select a Digital Elevation Model (DEM) representing the initial conditions you wish to model. We suggest using the GeoTiff (.tif) file format, though the model will accept most formats. The upstream and downstream boundaries of the reach to be modeled must occur on the North or South edges of the DEM. Therefore, some preprocessing and data manipulation may be necessary.
+Select a Digital Elevation Model (DEM) representing the initial conditions you wish to model. We suggest using the GeoTiff (.tif) file format, though the model will accept most formats. The upstream and downstream boundaries of the reach to be modeled must occur on the North or South edges of the DEM. Therefore, it may be necessary to rotate and clip certain DEMs in order to ensure the boundaries fall on the north and south edges of the topographic surface. 
 
+Select an input text file. This is a space delimited file created by the user that specifies, the date, discharge, downstream water surface elevation (DSWSE), and imported sediment for each event the user wishes to model. Dates must be in the format 'MM /dd/yyyy,hh:mm'. Specify discharge in cubic meters per second. DSWSE is meters below the maximum elevation of the input DEM, this will always be a negative number. For example, if the DSWSE is 30m and the highest point on the input DEM is 35m the value of the DSWSE will be -5m. This value does not need to be exact for each discharge to be modeled, it just provides a starting point, the MoRPHED Model employs an algorithm to determine the exact DSWSE as changes will occur during the course of modeling. Imported sediment can be represented as an exact volume (m^3) or as a proportion the sediment exported from the reach during an event. The appropriate option must be then be selected in the inputs dialog.
 
-Select an input text file. This is a space delimited file created by the user that specifies, the date, discharge, downstream water surface elevation (DSWSE), and imported sediment for each event the user wishes to model. Dates MUST be in the format 'MM/dd/yyyy,hh:mm'. Discharge is cubic meters per second. DSWSE is meters below the maximum elevation of the input DEM, this will always be a negative number. For example, if the DSWSE is 30m and the highest point on the input DEM is 35m the value of the DSWSE will be -5m. This value does not need to be exact for each discharge to be modeled, it just provides a starting point, the MoRPHED Model employs an alorithm to determine the exact DSWSE as changes will occur during the course of modeling. Imported sediment can be represented as an exact volume (m^3) or as a proportion the sediment exported from the reach during an event. The appropriate option must be then be selected in the inputs dialog.
 
 ###4. Set the MoRPHED Parameters
 
 Click on the MoRPHED Parameters button.
 
-Set the parameters for the path-length distributions representing sediment deposition.
+Set the parameters for the path-length distributions that will be used to determine transport and deposition locations for entrained and imported sediment.
 
-Slope Threshold, Shear Stress Threshold, and Area Threshold relate to bank erosion. Slope Threshold is the slope a bank must be to experience bank erosion, Area Threshold is the area a bank must be experience bank erosion, and Shear Stress Threshold is the shear stress a bank must experience to undergo erosion. The Bed Erosion Scaling Factor describes the proportion of sediment that is actually eroded at a given location. Grain Size is the average D50 grain size of the reach to be modeled and is used to determine the critical shear stress for bed erosion. To completely eliminate bank erosion from a simulation the Slope Threshold should be set to 91.
+The parameters Slope Threshold, Shear Stress Threshold, and Area Threshold relate to bank erosion. Slope Threshold describes the minimum slope (in percent risedegrees) of a bank in order to undergo bank erosion. Area Threshold describes the minimum area a group of cells must contain in order to undergo  bank erosion, and Shear Stress Threshold is the minimum shear stress in adjacent wetted cells necessary to compute bank erosion at a cell. 
+
 
 ###5. Set the Delft3D Parameters
 
 Click on the Delft3D Parameters button.
 
-Select the directory where Delft3D is installed. MoRPHED needs this directory to access the Delft3D executables, the directory must contain the subdirectory 'w32'. Select the location of the upstream and downstream boundaries. For the other parameters the defaults may be used. A better hydraulic solution may be reached by adjusting the values of the additional parameters, however, we recommend reading the [Delft3D documentation](http://oss.deltares.nl/documents/183920/185723/Delft3D-FLOW_User_Manual.pdf) before doing so.
+Select the directory where Delft3D is installed. MoRPHED needs this directory to access the Delft3D executables, the directory must contain the subdirectory 'w32'. Select the location of the upstream and downstream boundaries. For the other parameters, consult the Delft3D documentation provided at [http://oss.deltares.nl/documents/183920/185723/Delft3D-FLOW_User_Manual.pdf](http://oss.deltares.nl/documents/183920/185723/Delft3D-FLOW_User_Manual.pdf).
 
 ###6. Run
 
-Click Run and the MoRPHED Model will begin. While the model is running the GUI will be unresponsive and the status will read "Not Responding". Once the model has finished the GUI will once again become responsive. You can check the progress of the model by navigating to the working directory for the simulation and observing the outputs for each completed event.
+Click Run and the MoRPHED model will begin. While the model is running, the GUI will be unresponsive and the status will read "Not Responding". Once the model has finished the GUI will once again become responsive. You may check the progress of the simulation by navigating to the working directory for the simulation and viewing the outputs for each completed event.
 
 ##Notes
 
