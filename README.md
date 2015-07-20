@@ -32,13 +32,13 @@ Click on the MoRPHED Parameters button.
 
 Set the parameters for the path-length distributions representing sediment deposition.
 
-Slope Threshold, Shear Stress Threshold, and Area Threshold relate to bank erosion. Slope Treshold is the slope a bank must be to experience bank erosion, Area Threshold is the area a bank must be experience bank erosion, and Shear Stress Threshold is the shear stress a bank must experience to undergo erosion. The Bed Erosion Scaling Factor describes the proportion of sediment that is actually eroded at a given location. Grain Size is the average D50 grain size of the reach to be modeled and is used to determine the critical shear stress for bed erosion. To completely eliminate bank erosion from a simulation the Slope Threshold should be set to 91.
+Slope Threshold, Shear Stress Threshold, and Area Threshold relate to bank erosion. Slope Threshold is the slope a bank must be to experience bank erosion, Area Threshold is the area a bank must be experience bank erosion, and Shear Stress Threshold is the shear stress a bank must experience to undergo erosion. The Bed Erosion Scaling Factor describes the proportion of sediment that is actually eroded at a given location. Grain Size is the average D50 grain size of the reach to be modeled and is used to determine the critical shear stress for bed erosion. To completely eliminate bank erosion from a simulation the Slope Threshold should be set to 91.
 
 ###5. Set the Delft3D Parameters
 
 Click on the Delft3D Parameters button.
 
-Select the directory where Delft3D is installed. MoRPHED needs this directory to access the Delft3D executables, the directory must contain the subdirectory 'w32'. Select the loaction of the upstream and downstream boundaries. For the other parameters the defaults may be used. A better hydraulic solution may be reached by adjusting the values of the additional parameters, however, we recommend reading the [Delft3D documentation](http://oss.deltares.nl/documents/183920/185723/Delft3D-FLOW_User_Manual.pdf) before doing so.
+Select the directory where Delft3D is installed. MoRPHED needs this directory to access the Delft3D executables, the directory must contain the subdirectory 'w32'. Select the location of the upstream and downstream boundaries. For the other parameters the defaults may be used. A better hydraulic solution may be reached by adjusting the values of the additional parameters, however, we recommend reading the [Delft3D documentation](http://oss.deltares.nl/documents/183920/185723/Delft3D-FLOW_User_Manual.pdf) before doing so.
 
 ###6. Run
 
@@ -63,8 +63,6 @@ Click Run and the MoRPHED Model will begin. While the model is running the GUI w
 2. Update the .pro files for the MORPHED_LIB and MORPHED_GUI projects to point to the location of the GDAL DLL and header files.
 
 3. Make sure the MORPHED_GUI .pro is linked to the MORPHED_LIB project.
-
-#Using the MoRPHED Model
 
 ##Known bugs
 
