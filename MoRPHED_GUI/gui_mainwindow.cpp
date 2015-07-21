@@ -47,7 +47,7 @@ void GUI_MainWindow::disableButtons()
 
 void GUI_MainWindow::enableButtons()
 {
-    ui->btn_description->setEnabled(true);
+    //ui->btn_description->setEnabled(true);
     ui->btn_inputs->setEnabled(true);
     ui->btn_morphParam->setEnabled(true);
     ui->btn_delftParam->setEnabled(true);
