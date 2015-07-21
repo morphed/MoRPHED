@@ -77,6 +77,9 @@
            </item>
            <item>
             <widget class="QRadioButton" name="rbtn_usEast">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
              <property name="text">
               <string>East</string>
              </property>
@@ -84,6 +87,9 @@
            </item>
            <item>
             <widget class="QRadioButton" name="rbtn_usWest">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
              <property name="text">
               <string>West</string>
              </property>
@@ -133,6 +139,9 @@
            </item>
            <item>
             <widget class="QRadioButton" name="rbtn_dsEast">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
              <property name="text">
               <string>East</string>
              </property>
@@ -140,6 +149,9 @@
            </item>
            <item>
             <widget class="QRadioButton" name="rbtn_dsWest">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
              <property name="text">
               <string>West</string>
              </property>
