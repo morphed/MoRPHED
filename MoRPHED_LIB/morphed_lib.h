@@ -7,7 +7,7 @@
 #include "gdal_priv.h"
 
 const double PI = 3.14159265;
-const double POROSITY = 0.7;
+const double POROSITY = 0.4;
 const double RHO_S = 2650.0;
 const double RHO = 1000.0;
 const double A = 9.0;

@@ -964,6 +964,10 @@ void MORPH_Raster::subtract(const char *sourcePath, const char *subtractPath, co
             else
             {
                 newRow[j] = srcRow[j] - subRow[j];
+                if (newRow[j] < -9990 || newRow[j] > 9990)
+                {
+                    newRow[j] = noData;
+                }
             }
         }
 
